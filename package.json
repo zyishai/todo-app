@@ -4,15 +4,22 @@
   "description": "Todo app (vanilla js) using TDD approach.",
   "main": "js/main.js",
   "scripts": {
+    "dev": "parcel serve src/index.html",
     "start": "browser-sync start --ss ./src --cwd ./src --server -w \"src/**/*.*\" --no-notify",
     "test:e2e": "cypress open",
+    "test:unit": "mocha --growl --check-leaks --ui tdd --reporter list",
+    "test:unit:watch": "yarn test:unit --watch",
     "deploy": "surge src tasks.surge.sh"
   },
   "author": "Yishai Zehavi (zehaviyishai@gmail.com)",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "cypress": "^4.3.0",
-    "cz-conventional-changelog": "3.1.0"
+    "cz-conventional-changelog": "3.1.0",
+    "mocha": "^7.1.1",
+    "parcel-bundler": "^1.12.4"
   },
   "config": {
     "commitizen": {
