@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Todo App</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Todo App</h1>
+        <form>
+            <div class="input">
+                <input type="text" placeholder="Describe your task">
+            </div>
+            <button type="submit" class="btn">Add Task</button>
+        </form>
+        <section class="tasks">
+            <ul>
+                <li>
+                    <input id="cb-1" type="checkbox" dir="auto">
+                    <label for="cb-1" class="done"></label>
+                    <span class="text">
+                        <span>Call Partner to change mobile plan</span>
+                        <input type="text">
+                    </span>
+                </li>
+                <li>
+                    <input id="cb-2" type="checkbox" dir="auto">
+                    <label for="cb-2" class="done"></label>
+                    <span class="text">
+                        <span>Do homework 1 in ML</span>
+                        <input type="text" class="" value="Do homework 1 in ML">
+                    </span>
+                </li>
+                <li>
+                    <input id="cb-3" type="checkbox" dir="auto">
+                    <label for="cb-3" class="done"></label>
+                    <span class="text">
+                        <span>Call Jacob and start final project</span>
+                        <input type="text">
+                    </span>
+                </li>
+            </ul>
+        </section>
+    </div>
+    <footer>
+        Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+    </footer>
+
+    <!-- <script>
+        const tasks = document.querySelectorAll('.tasks li');
+
+        tasks.forEach(task => {
+            task.addEventListener('dblclick', () => {
+                const edit = task.querySelector('.text input');
+                edit.classList.toggle('active');
+                edit.value = task.querySelector('.text span').textContent;
+            });
+        });
+    </script> -->
+</body>
+</html>
