@@ -4,12 +4,14 @@
   "description": "Todo app (vanilla js) using TDD approach.",
   "main": "js/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "browser-sync start --ss ./src --cwd ./src --server -w \"src/**/*.*\" --no-notify",
+    "test:e2e": "cypress open",
     "deploy": "surge src tasks.surge.sh"
   },
   "author": "Yishai Zehavi (zehaviyishai@gmail.com)",
   "license": "ISC",
   "devDependencies": {
+    "cypress": "^4.3.0",
     "cz-conventional-changelog": "3.1.0"
   },
   "config": {
