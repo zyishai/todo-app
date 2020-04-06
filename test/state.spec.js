@@ -36,3 +36,12 @@ test('calling toggleTaskState() should toggle `task.done` and call renderer.upda
 
     expect(task.done).to.be.false;
 });
+
+test('calling updateTaskContent() should set task\'s content property and call renderer.updateTak', function() {
+    const task = this.state.addNewTask('Example');
+
+    this.state.updateTaskContent(task.id, 'Two words');
+
+    expect(task.content).to.equal('Two words');
+    expect(this.state.renderer.updateTask).to.be.called;
+});
