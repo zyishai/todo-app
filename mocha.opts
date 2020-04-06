@@ -1,0 +1,4 @@
+--growl
+--check-leaks
+--ui tdd
+--reporter list

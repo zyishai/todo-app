@@ -1,19 +1,41 @@
 {
   "name": "todo-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Todo app (vanilla js) using TDD approach.",
   "main": "js/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "parcel serve src/index.html",
+    "start": "browser-sync start --ss ./src --cwd ./src --server -w \"src/**/*.*\" --no-notify",
+    "e2e": "cypress run --headless --browser chrome --reporter list",
+    "cypress": "cypress open",
+    "test": "mocha --growl --check-leaks --globals document --ui tdd --reporter list --require @babel/register",
+    "test:watch": "yarn test:unit --watch",
+    "deploy": "surge src tasks.surge.sh"
   },
   "author": "Yishai Zehavi (zehaviyishai@gmail.com)",
   "license": "ISC",
   "devDependencies": {
-    "cz-conventional-changelog": "3.1.0"
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/register": "^7.9.0",
+    "chai": "^4.2.0",
+    "cypress": "^4.3.0",
+    "cz-conventional-changelog": "3.1.0",
+    "jsdom": "^16.2.2",
+    "mocha": "^7.1.1",
+    "nyc": "^15.0.1",
+    "parcel-bundler": "^1.12.4",
+    "sinon": "^9.0.1",
+    "sinon-chai": "^3.5.0"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.9.2"
   }
 }
