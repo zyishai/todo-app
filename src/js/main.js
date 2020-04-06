@@ -1,4 +1,4 @@
-import { AppState } from './app-state';
+import { AppState } from './state';
 
 export class Main {
     static init() {
@@ -23,8 +23,35 @@ export class Main {
 
     displayTask(task) {
         const taskItem = document.createElement('li');
-        taskItem.textContent = task;
+        const taskStatusLabel = document.createElement('label');
+        taskStatusLabel.className = 'done';
+        taskStatusLabel.htmlFor = task.id;
+        taskStatusLabel.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.state.toggleTaskState(task.id);
+        });
+        const taskStatusCheckbox = document.createElement('input');
+        taskStatusCheckbox.type = 'checkbox';
+        taskStatusCheckbox.id = task.id;
+        const taskTextContainer = document.createElement('span');
+        taskTextContainer.className = 'text';
+        const taskTextContent = document.createElement('span');
+        taskTextContent.textContent = task.content;
 
+        taskTextContainer.append(
+            taskTextContent
+        );
+        taskItem.append(
+            taskStatusCheckbox,
+            taskStatusLabel,
+            taskTextContainer
+        );
         this.tasksList.appendChild(taskItem);
+    }
+
+    updateTask(task) {
+        const taskItemCheckbox = document.querySelector(`#${task.id}`);
+        taskItemCheckbox.checked = task.done;
+        document.querySelector(`#${task.id} ~ .text span`).textContent = task.content;
     }
 }
