@@ -1,1 +1,7 @@
 node_modules
+cypress/examples
+cypress/videos
+.cache
+dist
+coverage
+.*/
