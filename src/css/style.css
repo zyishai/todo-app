@@ -160,6 +160,8 @@ body {
 .container .tasks ul li .text span {
     font-size: 1.2rem;
     font-weight: 400;
+    display: inline-block;
+    width: 100%;
 }
 
 .container .tasks ul li .text input {

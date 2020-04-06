@@ -28,6 +28,7 @@ export class Main {
         taskStatusLabel.htmlFor = task.id;
         taskStatusLabel.addEventListener('click', (e) => {
             e.preventDefault();
+            this.displayMode(task.id);
             this.state.toggleTaskState(task.id);
         });
         const taskStatusCheckbox = document.createElement('input');
@@ -37,9 +38,19 @@ export class Main {
         taskTextContainer.className = 'text';
         const taskTextContent = document.createElement('span');
         taskTextContent.textContent = task.content;
+        taskTextContent.addEventListener('dblclick', () => {
+            this.editMode(task.id);
+        });
+        const taskTextInput = document.createElement('input');
+        taskTextInput.type = 'text';
+        taskTextInput.addEventListener('dblclick', () => {
+            this.displayMode(task.id);
+            this.state.updateTaskContent(task.id, taskTextInput.value);
+        });
 
         taskTextContainer.append(
-            taskTextContent
+            taskTextContent,
+            taskTextInput
         );
         taskItem.append(
             taskStatusCheckbox,
@@ -53,5 +64,17 @@ export class Main {
         const taskItemCheckbox = document.querySelector(`#${task.id}`);
         taskItemCheckbox.checked = task.done;
         document.querySelector(`#${task.id} ~ .text span`).textContent = task.content;
+    }
+
+    editMode(taskId) {
+        const task = this.state.getById(taskId);
+        const taskTextInput = document.querySelector(`#${taskId} ~ .text input`);
+        taskTextInput.classList.add('active');
+        taskTextInput.value = task.content;
+    }
+
+    displayMode(taskId) {
+        const taskTextInput = document.querySelector(`#${taskId} ~ .text input`);
+        taskTextInput.classList.remove('active');
     }
 }

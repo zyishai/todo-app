@@ -24,4 +24,10 @@ export class AppState {
     getById(id) {
         return this.tasks.find(task => task.id === id);
     }
+
+    updateTaskContent(taskId, text) {
+        const task = this.getById(taskId);
+        task.content = text;
+        this.renderer.updateTask(task);
+    }
 }
