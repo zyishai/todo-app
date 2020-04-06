@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-it('when marking task as done, the view is updated accordingly', () => {
+it('when clicking on task done label, the view is updated accordingly', () => {
     cy.visit('http://localhost:1234');
 
     // adding task
@@ -9,6 +9,7 @@ it('when marking task as done, the view is updated accordingly', () => {
 
     cy.get('.tasks ul li').first().contains('Example task');
     cy.get('.tasks ul li').first().within(() => {
+        cy.get('input[type="checkbox"]').should('not.be.checked');
         cy.get('label').click();
         cy.get('input[type="checkbox"]').should('be.checked');
     });

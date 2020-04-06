@@ -15,9 +15,9 @@ export class AppState {
         return task;
     }
 
-    finishTask(taskId) {
+    toggleTaskState(taskId) {
         const task = this.getById(taskId)
-        task.done = true;
+        task.done = !task.done;
         this.renderer.updateTask(task);
     }
 

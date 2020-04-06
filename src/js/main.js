@@ -28,7 +28,7 @@ export class Main {
         taskStatusLabel.htmlFor = task.id;
         taskStatusLabel.addEventListener('click', (e) => {
             e.preventDefault();
-            this.state.finishTask(task.id);
+            this.state.toggleTaskState(task.id);
         });
         const taskStatusCheckbox = document.createElement('input');
         taskStatusCheckbox.type = 'checkbox';

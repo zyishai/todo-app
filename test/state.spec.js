@@ -23,11 +23,16 @@ test('calling addNewTask() should call renderer.displayTask()', function() {
     expect(this.state.renderer.displayTask).to.be.calledWith(task);
 });
 
-test('calling finishTask() should set `task.done` to true and call renderer.updateTask with the task', function() {
+test('calling toggleTaskState() should toggle `task.done` and call renderer.updateTask with the task', function() {
     const task = this.state.addNewTask('Example');
 
-    this.state.finishTask(task.id);
+    this.state.toggleTaskState(task.id);
 
     expect(task.done).to.be.true;
     expect(this.state.renderer.updateTask).to.be.calledWith(task);
+
+    // should return task.done to be false
+    this.state.toggleTaskState(task.id);
+
+    expect(task.done).to.be.false;
 });
