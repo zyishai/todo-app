@@ -25,3 +25,13 @@ test('when clicking the createNewTaskButton new item appended to taskList', func
 
     expect(this.main.tasksList.children).to.have.lengthOf(1);
 });
+
+test('when clicking the status label of and item, state.finishTask() should be called', function() {
+    spy(this.main.state);
+
+    this.main.createNewTaskButton.click();
+
+    document.querySelector('li label').click();
+
+    expect(this.main.state.finishTask).to.be.called;
+});
