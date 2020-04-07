@@ -13,4 +13,10 @@ export class LocalStorageWrapper {
     fetchAllTasks() {
         return JSON.parse(localStorage.getItem('tasks') || '[]');
     }
+
+    deleteTask(taskId) {
+        let tasks = this.fetchAllTasks().filter(t => t.id !== taskId);
+
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
 }

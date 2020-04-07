@@ -50,7 +50,7 @@ export class Main {
         taskTextDeleteSign.className = 'delete';
         taskTextDeleteSign.innerHTML = '&#128465;';
         taskTextDeleteSign.addEventListener('click', () => {
-            // @TODO delete task
+            this.state.deleteTask(task.id);
         });
         const taskTextInput = document.createElement('input');
         taskTextInput.type = 'text';
@@ -76,6 +76,10 @@ export class Main {
         const taskItemCheckbox = document.querySelector(`#${task.id}`);
         taskItemCheckbox.checked = task.done;
         document.querySelector(`#${task.id} ~ .text .content`).textContent = task.content;
+    }
+
+    removeTask(taskId) {
+        document.querySelector(`#${taskId}`).parentNode.remove();
     }
 
     editMode(taskId) {
