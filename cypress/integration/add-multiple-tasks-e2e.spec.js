@@ -15,12 +15,12 @@ it('should be able multiple tasks and control them independently', () => {
     cy.get('.tasks ul li').eq(1).find('input[type="checkbox"]').should('not.be.checked');
 
     // control content editing
-    cy.get('.tasks ul li').eq(1).find('.text span').dblclick();
+    cy.get('.tasks ul li').eq(1).find('.text .content').dblclick();
     cy.get('.tasks ul li').first().find('.text input').should('not.be.visible');
     cy.get('.tasks ul li').eq(1).find('.text input').should('be.visible');
     cy.get('.tasks ul li').eq(1).find('.text input').type('{selectall}Changed').dblclick();
-    cy.get('.tasks ul li').eq(1).find('.text span').should('have.text', 'Changed');
-    cy.get('.tasks ul li').first().find('.text span').should('have.text', 'First task');
+    cy.get('.tasks ul li').eq(1).find('.text .content').should('have.text', 'Changed');
+    cy.get('.tasks ul li').first().find('.text .content').should('have.text', 'First task');
 
     cy.end();
 });

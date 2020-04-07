@@ -42,7 +42,7 @@ test('when double clicking on the item\'s text, the edit input should have class
 
     this.main.createNewTaskButton.click();
 
-    document.querySelector('li .text span').dispatchEvent(new MouseEvent('dblclick'));
+    document.querySelector('li .text .content').dispatchEvent(new MouseEvent('dblclick'));
 
     expect(this.main.editMode).to.be.called;
     expect(document.querySelector('li .text input')).to.have.property('className').include('active');
@@ -53,7 +53,7 @@ test('when double clicking on the item\'s edit input, the edit input should not 
 
     this.main.createNewTaskButton.click();
 
-    document.querySelector('li .text span').dispatchEvent(new MouseEvent('dblclick'));
+    document.querySelector('li .text .content').dispatchEvent(new MouseEvent('dblclick'));
     document.querySelector('li .text input').dispatchEvent(new MouseEvent('dblclick'));
 
     expect(this.main.displayMode).to.be.called;
@@ -65,7 +65,7 @@ test('when double clicking on the item\'s edit input, state.updateTaskContent() 
 
     this.main.createNewTaskButton.click();
 
-    document.querySelector('li .text span').dispatchEvent(new MouseEvent('dblclick'));
+    document.querySelector('li .text .content').dispatchEvent(new MouseEvent('dblclick'));
     document.querySelector('li .text input').dispatchEvent(new MouseEvent('dblclick'));
 
     expect(this.main.state.updateTaskContent).to.be.called;
@@ -76,7 +76,7 @@ test('when clicking the status label of an item while on "edit mode", displayMod
 
     this.main.createNewTaskButton.click();
 
-    document.querySelector('li .text span').dispatchEvent(new MouseEvent('dblclick'));
+    document.querySelector('li .text .content').dispatchEvent(new MouseEvent('dblclick'));
     document.querySelector('li label').click();
 
     expect(this.main.displayMode).to.be.called;
