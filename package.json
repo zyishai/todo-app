@@ -10,7 +10,8 @@
     "cypress": "cypress open",
     "test": "mocha --growl --check-leaks --globals document --globals MouseEvent --ui tdd --reporter list --require @babel/register",
     "test:watch": "yarn test:unit --watch",
-    "deploy": "surge src tasks.surge.sh"
+    "build": "parcel build src/index.html",
+    "deploy": "surge dist tasks.surge.sh"
   },
   "author": "Yishai Zehavi (zehaviyishai@gmail.com)",
   "license": "ISC",
