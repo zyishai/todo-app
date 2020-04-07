@@ -6,7 +6,7 @@ export class LocalStorageWrapper {
     }
 
     updateTask(task) {
-        const tasks = this.fetchAllTasks().map(t => t.id === task.id ? task.toJSON() : t);
+        const tasks = this.fetchAllTasks().map(t => t.id === task.id ? task : t);
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
