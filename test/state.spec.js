@@ -1,18 +1,32 @@
 import { expect } from 'chai';
-import { spy, createStubInstance } from 'sinon';
+import { createStubInstance, stub } from 'sinon';
 import { AppState } from '../src/js/state';
 import { Main } from '../src/js/main';
+import { LocalStorageWrapper } from '../src/js/storage';
 
 setup(function() {
     const MainStub = createStubInstance(Main);
-    this.state = new AppState(MainStub);
+    const LocalStorageStub = createStubInstance(LocalStorageWrapper, {
+        fetchAllTasks: stub().returns([])
+    });
+    this.state = new AppState(MainStub, LocalStorageStub);
 });
 
+// DEBT!
+test('initial state should come from `storage`', function() {
+    expect(this.state.storage.fetchAllTasks).to.be.called;
+});
 
 test('calling addNewTask() should save the task in the state', function() {
     this.state.addNewTask('Example task');
 
     expect(this.state.tasks).to.be.lengthOf(1);
+});
+
+test('calling addNewTask() should call storage.persistTask()', function() {
+    this.state.addNewTask('Example task');
+
+    expect(this.state.storage.persistTask).to.be.called;
 });
 
 test('calling addNewTask() should call renderer.displayTask()', function() {
@@ -37,6 +51,14 @@ test('calling toggleTaskState() should toggle `task.done` and call renderer.upda
     expect(task.done).to.be.false;
 });
 
+test('calling toggleTaskState() should call storage.updateTask', function() {
+    const task = this.state.addNewTask('Example task');
+
+    this.state.toggleTaskState(task.id);
+
+    expect(this.state.storage.updateTask).to.be.called;
+});
+
 test('calling updateTaskContent() should set task\'s content property and call renderer.updateTak', function() {
     const task = this.state.addNewTask('Example');
 
@@ -44,4 +66,12 @@ test('calling updateTaskContent() should set task\'s content property and call r
 
     expect(task.content).to.equal('Two words');
     expect(this.state.renderer.updateTask).to.be.called;
+});
+
+test('calling updateTaskContent() should call storage.updateTask', function() {
+    const task = this.state.addNewTask('Example task');
+
+    this.state.updateTaskContent(task.id, 'Two words');
+
+    expect(this.state.storage.updateTask).to.be.called;
 });
