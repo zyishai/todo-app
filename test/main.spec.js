@@ -88,3 +88,19 @@ test('after form is submitted, the form\'s input is cleared', function() {
 
     expect(this.main.newTaskInput.value).to.be.empty;
 });
+
+test('clicking on the garbage icon of a task, state.deleteTask() should be called', function() {
+    spy(this.main.state);
+
+    this.main.createNewTaskButton.click();
+    document.querySelector('li .text .delete').click();
+
+    expect(this.main.state.deleteTask).to.be.called;
+});
+
+test('calling removeTask() should remove task item from the DOM', function() {
+    this.main.createNewTaskButton.click();
+    document.querySelector('li .text .delete').click();
+
+    expect(document.querySelector('ul li')).to.be.null;
+});
