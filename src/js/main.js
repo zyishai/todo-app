@@ -18,6 +18,7 @@ export class Main {
         this.createNewTaskForm.addEventListener('submit', (e) => {
             e.preventDefault();
             this.state.addNewTask(this.newTaskInput.value);
+            this.newTaskInput.value = '';
         });
     }
 
