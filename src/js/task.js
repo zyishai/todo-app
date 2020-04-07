@@ -10,4 +10,12 @@ export class Task {
     generateId() {
         this.id = 'task-' + randomBytes(6).toString('hex');
     }
+
+    toJSON() {
+        return {
+            id: this.id,
+            content: this.content,
+            done: this.done
+        }
+    }
 }

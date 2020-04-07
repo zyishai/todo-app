@@ -1,15 +1,18 @@
 import { Task } from "./task";
 
 export class AppState {
-    constructor(renderer) {
-        this.tasks = [];
+    constructor(renderer, storage) {
+        this.tasks = storage.fetchAllTasks();
         this.renderer = renderer;
+        this.storage = storage;
     }
 
     addNewTask(text) {
         const task = new Task(text);
         this.tasks.push(task);
-
+        if (this.storage) {
+            this.storage.persistTask(task);
+        }
         this.renderer.displayTask(task);
 
         return task;
@@ -18,6 +21,9 @@ export class AppState {
     toggleTaskState(taskId) {
         const task = this.getById(taskId)
         task.done = !task.done;
+        if (this.storage) {
+            this.storage.updateTask(task);
+        }
         this.renderer.updateTask(task);
     }
 
@@ -28,6 +34,9 @@ export class AppState {
     updateTaskContent(taskId, text) {
         const task = this.getById(taskId);
         task.content = text;
+        if (this.storage) {
+            this.storage.updateTask(task);
+        }
         this.renderer.updateTask(task);
     }
 }

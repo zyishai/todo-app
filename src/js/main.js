@@ -1,4 +1,5 @@
 import { AppState } from './state';
+import { LocalStorageWrapper } from './storage';
 
 export class Main {
     static init() {
@@ -12,7 +13,8 @@ export class Main {
         this.tasksList = document.querySelector('.tasks ul');
         this.createNewTaskForm = document.querySelector('.container form');
 
-        this.state = new AppState(this);
+        this.state = new AppState(this, new LocalStorageWrapper());
+        this.state.tasks.forEach(this.displayTask.bind(this));
         
         // register event listeners
         this.createNewTaskForm.addEventListener('submit', (e) => {
