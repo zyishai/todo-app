@@ -81,3 +81,10 @@ test('when clicking the status label of an item while on "edit mode", displayMod
 
     expect(this.main.displayMode).to.be.called;
 });
+
+test('after form is submitted, the form\'s input is cleared', function() {
+    this.main.newTaskInput.value = 'Example task';
+    this.main.createNewTaskButton.click();
+
+    expect(this.main.newTaskInput.value).to.be.empty;
+});
