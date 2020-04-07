@@ -41,9 +41,16 @@ export class Main {
         const taskTextContainer = document.createElement('span');
         taskTextContainer.className = 'text';
         const taskTextContent = document.createElement('span');
+        taskTextContent.className = 'content';
         taskTextContent.textContent = task.content;
         taskTextContent.addEventListener('dblclick', () => {
             this.editMode(task.id);
+        });
+        const taskTextDeleteSign = document.createElement('span');
+        taskTextDeleteSign.className = 'delete';
+        taskTextDeleteSign.innerHTML = '&#128465;';
+        taskTextDeleteSign.addEventListener('click', () => {
+            this.state.deleteTask(task.id);
         });
         const taskTextInput = document.createElement('input');
         taskTextInput.type = 'text';
@@ -54,6 +61,7 @@ export class Main {
 
         taskTextContainer.append(
             taskTextContent,
+            taskTextDeleteSign,
             taskTextInput
         );
         taskItem.append(
@@ -67,7 +75,11 @@ export class Main {
     updateTask(task) {
         const taskItemCheckbox = document.querySelector(`#${task.id}`);
         taskItemCheckbox.checked = task.done;
-        document.querySelector(`#${task.id} ~ .text span`).textContent = task.content;
+        document.querySelector(`#${task.id} ~ .text .content`).textContent = task.content;
+    }
+
+    removeTask(taskId) {
+        document.querySelector(`#${taskId}`).parentNode.remove();
     }
 
     editMode(taskId) {

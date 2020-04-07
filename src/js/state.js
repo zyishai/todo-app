@@ -39,4 +39,10 @@ export class AppState {
         }
         this.renderer.updateTask(task);
     }
+
+    deleteTask(taskId) {
+        this.storage.deleteTask(taskId);
+        this.tasks = this.storage.fetchAllTasks();
+        this.renderer.removeTask(taskId);
+    }
 }

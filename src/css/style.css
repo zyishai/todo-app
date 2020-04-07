@@ -134,11 +134,15 @@ body {
     background: #eee url(../img/tick.svg);
     background-size: calc(100% - 14px);
     background-repeat: no-repeat;
-    background-position: 7px 7px;
+    background-position: center;
 }
 
 .container .tasks ul li input[type="checkbox"]:checked ~ .text {
     color: #ddd;
+}
+
+.container .tasks ul li input[type="checkbox"]:checked ~ .text .delete {
+    display: none;
 }
 
 .container .tasks ul li .done {
@@ -148,20 +152,34 @@ body {
     height: 30px;
     margin: 0 10px;
     background: #eee;
+    background-size: 0;
     border-radius: 50%;
+    transition: background-size .3s;
 }
 
 .container .tasks ul li .text {
     position: relative;
     display: inline-block;
     width: 100%;
+    display: flex;
+    flex-direction: row;
+    transition: color .3s;
 }
 
-.container .tasks ul li .text span {
+.container .tasks ul li .text .content {
     font-size: 1.2rem;
     font-weight: 400;
     display: inline-block;
-    width: 100%;
+    flex: 1;
+}
+
+.container .tasks ul li .text .delete {
+    cursor: pointer;
+    transition: .3s;
+}
+
+.container .tasks ul li .text .delete:hover {
+    transform: scale(1.1);
 }
 
 .container .tasks ul li .text input {

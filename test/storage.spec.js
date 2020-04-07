@@ -67,3 +67,12 @@ test('calling updateTask() should update the task in localStorage', function() {
     expect(localStorage.setItem).to.be.calledTwice;
     expect(this.localStorageWrapper.fetchAllTasks()[0]).to.have.property('content', 'New content');
 });
+
+test('calling deleteTask() should remove the task from the localStorage', function() {
+    const task = new Task('Test');
+    this.localStorageWrapper.persistTask(task);
+
+    this.localStorageWrapper.deleteTask(task.id);
+
+    expect(this.localStorageWrapper.fetchAllTasks()).to.not.deep.include(task.toJSON());
+});

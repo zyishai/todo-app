@@ -10,7 +10,7 @@ it('when double clicking task text, the task should move to edit mode', () => {
     cy.get('.tasks ul li').first().find('.text input[type="text"]').should('not.be.visible');
 
     // enter "edit mode"
-    cy.get('.tasks ul li').first().find('.text span').dblclick();
+    cy.get('.tasks ul li').first().find('.text .content').dblclick();
     cy.get('.tasks ul li').first().find('.text input[type="text"]')
         .should('be.visible')
         .should('have.value', 'Example task')
@@ -18,7 +18,7 @@ it('when double clicking task text, the task should move to edit mode', () => {
 
     cy.get('.tasks ul li').first().find('label').click();
 
-    cy.get('.tasks ul li').first().find('.text span').should('have.text', 'Example task');
+    cy.get('.tasks ul li').first().find('.text .content').should('have.text', 'Example task');
     cy.get('.tasks ul li').first().find('.text input[type="text"]').should('not.be.visible');
     cy.get('.tasks ul li').first().find('input[type="checkbox"]').should('be.checked');
 
