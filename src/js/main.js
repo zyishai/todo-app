@@ -37,6 +37,7 @@ export class Main {
         const taskStatusCheckbox = document.createElement('input');
         taskStatusCheckbox.type = 'checkbox';
         taskStatusCheckbox.id = task.id;
+        taskStatusCheckbox.checked = task.done;
         const taskTextContainer = document.createElement('span');
         taskTextContainer.className = 'text';
         const taskTextContent = document.createElement('span');
