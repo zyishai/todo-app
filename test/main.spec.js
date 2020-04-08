@@ -104,3 +104,10 @@ test('calling removeTask() should remove task item from the DOM', function() {
 
     expect(document.querySelector('ul li')).to.be.null;
 });
+
+test('clicking the clear all tasks button should call state.clearAllFinishedTasks()', function() {
+    spy(this.main.state);
+    this.main.deleteAllFinishedTasksButton.click();
+
+    expect(this.main.state.clearAllFinishedTasks).to.be.called;
+});

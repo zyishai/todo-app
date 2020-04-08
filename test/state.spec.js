@@ -118,3 +118,35 @@ test('when calling deletTask(), renderer.removeTask() should be called', functio
 
     expect(this.state.renderer.removeTask).to.be.calledWith(task.id);
 });
+
+test('calling clearAllFinishedTasks() should remove all finished tasks', function() {
+    this.state.addNewTask('First task');
+    const toBeClearedTask = this.state.addNewTask('Second task');
+    this.state.toggleTaskState(toBeClearedTask.id);
+    this.state.addNewTask('Third task');
+    this.state.clearAllFinishedTasks();
+
+    expect(this.state.tasks)
+        .to.have.lengthOf(2)
+        .and
+        .to.not.deep.include(toBeClearedTask.toJSON());
+});
+
+test('calling clearAllFinishedTasks() should call storage.clearAllFinishedTasks()', function() {
+    spy(this.state.storage);
+    this.state.addNewTask('First task');
+    this.state.addNewTask('Second task');
+    this.state.addNewTask('Third task');
+    this.state.clearAllFinishedTasks();
+
+    expect(this.state.storage.clearAllFinishedTasks).to.be.called;
+});
+
+test('calling clearAllFinishedTasks() should call renderer.updateView()', function() {
+    this.state.addNewTask('First task');
+    this.state.addNewTask('Second task');
+    this.state.addNewTask('Third task');
+    this.state.clearAllFinishedTasks();
+
+    expect(this.state.renderer.updateView).to.be.called;
+});
