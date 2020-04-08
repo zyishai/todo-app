@@ -12,6 +12,7 @@ export class Main {
         this.createNewTaskButton = document.querySelector('form .btn[type="submit"]');
         this.tasksList = document.querySelector('.tasks ul');
         this.createNewTaskForm = document.querySelector('.container form');
+        this.deleteAllFinishedTasksButton = document.querySelector('.tasks .clear');
 
         this.state = new AppState(this, new LocalStorageWrapper());
         this.state.tasks.forEach(this.displayTask.bind(this));
@@ -21,6 +22,9 @@ export class Main {
             e.preventDefault();
             this.state.addNewTask(this.newTaskInput.value);
             this.newTaskInput.value = '';
+        });
+        this.deleteAllFinishedTasksButton.addEventListener('click', () => {
+            this.state.clearAllFinishedTasks();
         });
     }
 
@@ -72,6 +76,7 @@ export class Main {
         this.tasksList.appendChild(taskItem);
     }
 
+    // INSTEAD OF THIS...
     updateTask(task) {
         const taskItemCheckbox = document.querySelector(`#${task.id}`);
         taskItemCheckbox.checked = task.done;
@@ -80,6 +85,12 @@ export class Main {
 
     removeTask(taskId) {
         document.querySelector(`#${taskId}`).parentNode.remove();
+    }
+
+    // ...DO THIS
+    updateView() {
+        this.tasksList.innerHTML = '';
+        this.state.tasks.forEach(this.displayTask.bind(this));
     }
 
     editMode(taskId) {

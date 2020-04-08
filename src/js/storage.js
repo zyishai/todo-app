@@ -19,4 +19,11 @@ export class LocalStorageWrapper {
 
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
+
+    clearAllFinishedTasks() {
+        console.log(this.fetchAllTasks());
+        const tasks = this.fetchAllTasks().filter(task => !task.done);
+        console.log(tasks);
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
 }
