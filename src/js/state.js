@@ -45,4 +45,10 @@ export class AppState {
         this.tasks = this.storage.fetchAllTasks();
         this.renderer.removeTask(taskId);
     }
+
+    clearAllFinishedTasks() {
+        this.storage.clearAllFinishedTasks();
+        this.tasks = this.storage.fetchAllTasks();
+        this.renderer.updateView();
+    }
 }

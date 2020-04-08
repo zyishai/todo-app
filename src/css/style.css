@@ -104,14 +104,41 @@ body {
     background-color: rgb(255, 218, 185);
 }
 
+.container hr {
+    width: 40%;
+    margin: 0 auto;
+    border: 0;
+    height: 1px;
+    background-color: rgb(220, 220, 220);
+}
+
 .container .tasks {
     flex: 1;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+    padding-top: 1.5rem;
+}
+
+.container .tasks .clear {
+    display: block;
+    margin: 0 auto;
+    border: none;
+    outline: none;
+    padding: 3px 20px;
+    background-color: rgb(240, 198, 198);
+    cursor: pointer;
+}
+
+.container .tasks .clear:hover {
+    background-color: rgb(255, 212, 212);
 }
 
 .container .tasks ul {
+    flex: 1;
     padding: 0;
     margin: 0;
+    overflow-y: auto;
 }
 
 .container .tasks ul li {

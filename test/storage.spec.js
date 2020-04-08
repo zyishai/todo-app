@@ -76,3 +76,19 @@ test('calling deleteTask() should remove the task from the localStorage', functi
 
     expect(this.localStorageWrapper.fetchAllTasks()).to.not.deep.include(task.toJSON());
 });
+
+test('calling clearAllFinishedTasks should remove all finished tasks', function() {
+    const toBeClearedTask = new Task('First task');
+    this.localStorageWrapper.persistTask(toBeClearedTask);
+    toBeClearedTask.done = true;
+    this.localStorageWrapper.updateTask(toBeClearedTask);
+    
+    const toNotBeClearedTask = new Task('Second task');
+    this.localStorageWrapper.persistTask(toNotBeClearedTask);
+    this.localStorageWrapper.clearAllFinishedTasks();
+
+    expect(this.localStorageWrapper.fetchAllTasks())
+        .to.deep.include(toNotBeClearedTask.toJSON())
+        .and
+        .not.deep.include(toBeClearedTask.toJSON());
+});
