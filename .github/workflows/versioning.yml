@@ -1,0 +1,36 @@
+name: 'Tag and version commits to master'
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  bump_version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: 'find last tag and release'
+        id: 'last_tag'
+        uses: 'zyishai/last-tag-and-release@master'
+
+      - name: 'bump version'
+        id: bump
+        if: steps.last_tag.outputs.release != 'none'
+        uses: 'zyishai/semver-bump@master'
+        with:
+          current_version: ${{ steps.last_tag.outputs.last_tag }}
+          release: ${{ steps.last_tag.outputs.release }}
+
+      - name: 'push new version to github'
+        if: steps.last_tag.outputs.release != 'none'
+        uses: 'zyishai/push-new-tag@master'
+        with:
+          owner: zyishai
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ steps.bump.outputs.new_version }}
+
+      - name: 'print no new version'
+        if: steps.last_tag.outputs.release == 'none'
+        run: echo "new version not created"
