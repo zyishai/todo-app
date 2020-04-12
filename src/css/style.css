@@ -104,14 +104,41 @@ body {
     background-color: rgb(255, 218, 185);
 }
 
+.container hr {
+    width: 40%;
+    margin: 0 auto;
+    border: 0;
+    height: 1px;
+    background-color: rgb(220, 220, 220);
+}
+
 .container .tasks {
     flex: 1;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+    padding-top: 1.5rem;
+}
+
+.container .tasks .clear {
+    display: block;
+    margin: 0 auto;
+    border: none;
+    outline: none;
+    padding: 3px 20px;
+    background-color: rgb(240, 198, 198);
+    cursor: pointer;
+}
+
+.container .tasks .clear:hover {
+    background-color: rgb(255, 212, 212);
 }
 
 .container .tasks ul {
+    flex: 1;
     padding: 0;
     margin: 0;
+    overflow-y: auto;
 }
 
 .container .tasks ul li {
@@ -134,11 +161,15 @@ body {
     background: #eee url(../img/tick.svg);
     background-size: calc(100% - 14px);
     background-repeat: no-repeat;
-    background-position: 7px 7px;
+    background-position: center;
 }
 
 .container .tasks ul li input[type="checkbox"]:checked ~ .text {
     color: #ddd;
+}
+
+.container .tasks ul li input[type="checkbox"]:checked ~ .text .delete {
+    display: none;
 }
 
 .container .tasks ul li .done {
@@ -148,18 +179,34 @@ body {
     height: 30px;
     margin: 0 10px;
     background: #eee;
+    background-size: 0;
     border-radius: 50%;
+    transition: background-size .3s;
 }
 
 .container .tasks ul li .text {
     position: relative;
     display: inline-block;
     width: 100%;
+    display: flex;
+    flex-direction: row;
+    transition: color .3s;
 }
 
-.container .tasks ul li .text span {
+.container .tasks ul li .text .content {
     font-size: 1.2rem;
     font-weight: 400;
+    display: inline-block;
+    flex: 1;
+}
+
+.container .tasks ul li .text .delete {
+    cursor: pointer;
+    transition: .3s;
+}
+
+.container .tasks ul li .text .delete:hover {
+    transform: scale(1.1);
 }
 
 .container .tasks ul li .text input {
