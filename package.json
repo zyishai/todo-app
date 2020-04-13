@@ -37,6 +37,7 @@
     }
   },
   "dependencies": {
-    "@babel/runtime": "^7.9.2"
+    "@babel/runtime": "^7.9.2",
+    "hyperhtml": "^2.32.2"
   }
 }
