@@ -21,10 +21,7 @@ setup(function() {
     }
 
     globalThis.localStorage = fakeLocalStorage;
-    // const LocalStorageStub = createStubInstance(LocalStorageWrapper, {
-    //     fetchAllTasks: stub().returns([])
-    // });
-    this.state = new AppState(MainStub, new LocalStorageWrapper());
+    this.state = new AppState(new LocalStorageWrapper(), MainStub);
 });
 
 test('initial state should come from `storage`', function() {
@@ -45,21 +42,21 @@ test('calling addNewTask() should call storage.persistTask()', function() {
     expect(this.state.storage.persistTask).to.be.called;
 });
 
-test('calling addNewTask() should call renderer.displayTask()', function() {
+test('calling addNewTask() should call renderer.updateView()', function() {
     // act
     const task = this.state.addNewTask('Example task');
 
     // assert
-    expect(this.state.renderer.displayTask).to.be.calledWith(task);
+    expect(this.state.renderer.updateView).to.be.calledWith(task);
 });
 
-test('calling toggleTaskState() should toggle `task.done` and call renderer.updateTask with the task', function() {
+test('calling toggleTaskState() should toggle `task.done` and call renderer.updateView with the task', function() {
     const task = this.state.addNewTask('Example');
 
     this.state.toggleTaskState(task.id);
 
     expect(task.done).to.be.true;
-    expect(this.state.renderer.updateTask).to.be.calledWith(task);
+    expect(this.state.renderer.updateView).to.be.calledWith(task);
 
     // should return task.done to be false
     this.state.toggleTaskState(task.id);
@@ -76,13 +73,13 @@ test('calling toggleTaskState() should call storage.updateTask', function() {
     expect(this.state.storage.updateTask).to.be.called;
 });
 
-test('calling updateTaskContent() should set task\'s content property and call renderer.updateTak', function() {
+test('calling updateTaskContent() should set task\'s content property and call renderer.updateView', function() {
     const task = this.state.addNewTask('Example');
 
     this.state.updateTaskContent(task.id, 'Two words');
 
     expect(task.content).to.equal('Two words');
-    expect(this.state.renderer.updateTask).to.be.called;
+    expect(this.state.renderer.updateView).to.be.called;
 });
 
 test('calling updateTaskContent() should call storage.updateTask', function() {
@@ -111,12 +108,12 @@ test('when calling deleteTask(), storage.deleteTask() should be called', functio
     expect(this.state.storage.deleteTask).to.be.calledWith(task.id);
 });
 
-test('when calling deletTask(), renderer.removeTask() should be called', function() {
+test('when calling deletTask(), renderer.updateView() should be called', function() {
     const task = this.state.addNewTask('Test');
 
     this.state.deleteTask(task.id);
 
-    expect(this.state.renderer.removeTask).to.be.calledWith(task.id);
+    expect(this.state.renderer.updateView).to.be.calledWith(task.id);
 });
 
 test('calling clearAllFinishedTasks() should remove all finished tasks', function() {
