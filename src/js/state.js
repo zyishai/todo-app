@@ -1,9 +1,22 @@
 import { Task } from "./task";
 
 export class AppState {
-    constructor(renderer, storage) {
-        this.tasks = storage.fetchAllTasks();
+    constructor(storage, renderer) {
+        if (storage) {
+            this.storage = storage;
+        }
+        if (renderer) {
+            this.renderer = renderer;
+        }
+
+        this.tasks = this.storage ? storage.fetchAllTasks() : [];
+    }
+
+    setRenderer(renderer) {
         this.renderer = renderer;
+    }
+
+    setStorage(storage) {
         this.storage = storage;
     }
 
@@ -13,7 +26,9 @@ export class AppState {
         if (this.storage) {
             this.storage.persistTask(task);
         }
-        this.renderer.displayTask(task);
+        if (this.renderer) {
+            this.renderer.updateView(task);
+        }
 
         return task;
     }
@@ -24,7 +39,9 @@ export class AppState {
         if (this.storage) {
             this.storage.updateTask(task);
         }
-        this.renderer.updateTask(task);
+        if (this.renderer) {
+            this.renderer.updateView(task);
+        }
     }
 
     getById(id) {
@@ -37,18 +54,28 @@ export class AppState {
         if (this.storage) {
             this.storage.updateTask(task);
         }
-        this.renderer.updateTask(task);
+        if (this.renderer) {
+            this.renderer.updateView(task);
+        }
     }
 
     deleteTask(taskId) {
-        this.storage.deleteTask(taskId);
-        this.tasks = this.storage.fetchAllTasks();
-        this.renderer.removeTask(taskId);
+        if (this.storage) {
+            this.storage.deleteTask(taskId);
+            this.tasks = this.storage.fetchAllTasks();
+        }
+        if (this.renderer) {
+            this.renderer.updateView(taskId);
+        }
     }
 
     clearAllFinishedTasks() {
-        this.storage.clearAllFinishedTasks();
-        this.tasks = this.storage.fetchAllTasks();
-        this.renderer.updateView();
+        if (this.storage) {
+            this.storage.clearAllFinishedTasks();
+            this.tasks = this.storage.fetchAllTasks();
+        }
+        if (this.renderer) {
+            this.renderer.updateView();
+        }
     }
 }
