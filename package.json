@@ -8,7 +8,7 @@
     "start": "browser-sync start --ss ./src --cwd ./src --server -w \"src/**/*.*\" --no-notify",
     "e2e": "cypress run --headless --browser chrome --reporter list",
     "cypress": "cypress open",
-    "test": "mocha --growl --check-leaks --globals document --globals MouseEvent --globals localStorage --ui tdd --reporter list --require @babel/register",
+    "test": "mocha --growl --ui tdd --reporter list --require ./test/test-helper.js",
     "test:watch": "yarn test:unit --watch",
     "build": "parcel build src/index.html",
     "deploy": "surge dist tasks.surge.sh"
@@ -37,6 +37,7 @@
     }
   },
   "dependencies": {
-    "@babel/runtime": "^7.9.2"
+    "@babel/runtime": "^7.9.2",
+    "lit-html": "^1.2.1"
   }
 }
