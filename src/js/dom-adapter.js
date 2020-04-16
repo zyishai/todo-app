@@ -16,53 +16,87 @@ class Adapter {
     static _getAllDOMElements(selector) {
         return document.querySelectorAll(selector);
     }
+    static _renderListToContainer_NOT_IN_USE(items, itemToElementStringFn, container){
+        return render(html`${repeat(items, item => item.id, this._createDOMElement(itemToElementStringFn))}`, container);
+    }
     static _createDOMElement(fn){
         return (...args) => html`${fn(html, ...args)}`;
     }
-    static addEventListener(element, event, fn, opts){
+    static _addEventListener(element, event, fn, opts){
         return element.addEventListener(event, fn, opts);
     }
+    static _getNewTaskForm() {
+        return this._getDOMElement('.container form');
+    }
+    static _getNewTaskInput() {
+        return this._getDOMElement('.input input');
+    }
+    static _getClearFinishedTasksButton() {
+        return this._getDOMElement('.tasks .clear');
+    }
+    static _getTasksList() {
+        return this._getDOMElement('.tasks ul');
+    }
+    static _renderTask(handlers) {
+        return (task) => html`
+            <li>
+                <input id=${task.id} type="checkbox" ?checked=${task.done} dir="auto">
+                <label for=${task.id} class="done" @click=${(e) => {
+                    e.preventDefault();
+                    handlers.taskStatusChangeRquestHandler(task);
+                }}></label>
+                <span class="text">
+                    <span class="content" @dblclick=${() => handlers.taskContentStartEditRequestHandler(task)}>${task.content}</span>
+                    <span class="delete" @click=${() => handlers.deleteTaskRequestHandler(task)}>&#128465;</span>
+                    <input type="text" class="" @dblclick=${() => handlers.taskContentEndEditRequestHandler(task)} value=${task.content}>
+                </span>
+            </li>
+        `;
+    }
+    /** ===PUBLIC API=== */
     static onAddNewTaskRequest(newTaskRequestHandler) {
-        this.getNewTaskForm().addEventListener('submit', e => {
+        this._getNewTaskForm().addEventListener('submit', e => {
             e.preventDefault();
             newTaskRequestHandler();
         });
     }
     static onClearFinishedTasksRequest(clearFinishedTasksRequestHandler) {
-        this.getClearFinishedTasksButton().addEventListener('click', e => {
+        this._getClearFinishedTasksButton().addEventListener('click', e => {
             e.preventDefault();
             clearFinishedTasksRequestHandler();
         });
     }
-    static getNewTaskForm() {
-        return this._getDOMElement('.container form');
-    }
-    static getNewTaskInput() {
-        return this._getDOMElement('.input input');
-    }
     static getNewTaskInputValue() {
-        return this.getNewTaskInput().value;
-    }
-    static getClearFinishedTasksButton() {
-        return this._getDOMElement('.tasks .clear');
-    }
-    static getTasksList() {
-        return this._getDOMElement('.tasks ul');
+        return this._getNewTaskInput().value;
     }
     static getTaskInputValue(taskId) {
         return this._getDOMElement(`#${taskId} ~ .text input`).value;
     }
-    static renderListToContainer(items, itemToElementStringFn, container){
-        return render(html`${repeat(items, item => item.id, this._createDOMElement(itemToElementStringFn))}`, container);
+    static renderTasksList(tasks, userDefinedHandlers = {}) {
+        const defaultHandlers = {
+            taskStatusChangeRquestHandler: () => {},
+            taskContentStartEditRequestHandler: this.activateTaskEditMode,
+            taskContentEndEditRequestHandler: this.activateTaskDisplayMode,
+            deleteTaskRequestHandler: () => {}
+        };
+        const handlers = {
+            ...defaultHandlers,
+            ...userDefinedHandlers
+        };
+        return render(html`${repeat(
+            tasks,
+            task => task.id,
+            this._renderTask(handlers)
+        )}`, this._getTasksList());
     }
     static clearNewTaskInput() {
-        this.getNewTaskInput().value = '';
+        this._getNewTaskInput().value = '';
     }
-    static activateTaskDisplayMode(taskId) {
-        this._getDOMElement(`#${taskId} ~ .text input`).classList.remove('active');
+    static activateTaskDisplayMode(task) {
+        this._getDOMElement(`#${task.id} ~ .text input`).classList.remove('active');
     }
-    static activateTaskEditMode(taskId) {
-        this._getDOMElement(`#${taskId} ~ .text input`).classList.add('active');
+    static activateTaskEditMode(task) {
+        this._getDOMElement(`#${task.id} ~ .text input`).classList.add('active');
     }
 }
 
