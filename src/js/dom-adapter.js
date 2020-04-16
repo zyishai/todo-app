@@ -8,7 +8,6 @@
  */
 import { html, render } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat';
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js';
 
 class Adapter {
     static _getDOMElement(selector) {
@@ -22,6 +21,18 @@ class Adapter {
     }
     static addEventListener(element, event, fn, opts){
         return element.addEventListener(event, fn, opts);
+    }
+    static onAddNewTaskRequest(newTaskRequestHandler) {
+        this.getNewTaskForm().addEventListener('submit', e => {
+            e.preventDefault();
+            newTaskRequestHandler();
+        });
+    }
+    static onClearFinishedTasksRequest(clearFinishedTasksRequestHandler) {
+        this.getClearFinishedTasksButton().addEventListener('click', e => {
+            e.preventDefault();
+            clearFinishedTasksRequestHandler();
+        });
     }
     static getNewTaskForm() {
         return this._getDOMElement('.container form');

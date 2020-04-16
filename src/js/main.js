@@ -12,29 +12,24 @@ export class Main {
         this.updateView();
     }
 
-    _newTaskFormSubmitEventHandler(e) {
-        e.preventDefault();
+    _addNewTaskRequestHandler() {
         this.state.addNewTask(this.domAdapter.getNewTaskInputValue());
         this.domAdapter.clearNewTaskInput();
     }
 
-    _clearFinishedTasksButtonClickEventHandler() {
+    _clearFinishedTasksRequestHandler() {
         this.state.clearAllFinishedTasks();
     }
 
     registerGlobalListeners() {
         // `new task` form submittion -> add new task
-        this.domAdapter.addEventListener(
-            this.domAdapter.getNewTaskForm(),
-            'submit',
-            this._newTaskFormSubmitEventHandler.bind(this)
+        this.domAdapter.onAddNewTaskRequest(
+            this._addNewTaskRequestHandler.bind(this)
         );
         
         // `clear all finished tasks` button press
-        this.domAdapter.addEventListener(
-            this.domAdapter.getClearFinishedTasksButton(),
-            'click',
-            this._clearFinishedTasksButtonClickEventHandler.bind(this)
+        this.domAdapter.onClearFinishedTasksRequest(
+            this._clearFinishedTasksRequestHandler.bind(this)
         );
     }
 
