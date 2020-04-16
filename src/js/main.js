@@ -12,64 +12,49 @@ export class Main {
         this.updateView();
     }
 
-    _newTaskFormSubmitEventHandler(e) {
-        e.preventDefault();
+    _addNewTaskRequestHandler() {
         this.state.addNewTask(this.domAdapter.getNewTaskInputValue());
         this.domAdapter.clearNewTaskInput();
     }
 
-    _clearFinishedTasksButtonClickEventHandler() {
+    _clearFinishedTasksRequestHandler() {
         this.state.clearAllFinishedTasks();
     }
 
     registerGlobalListeners() {
         // `new task` form submittion -> add new task
-        this.domAdapter.addEventListener(
-            this.domAdapter.getNewTaskForm(),
-            'submit',
-            this._newTaskFormSubmitEventHandler.bind(this)
+        this.domAdapter.onAddNewTaskRequest(
+            this._addNewTaskRequestHandler.bind(this)
         );
         
         // `clear all finished tasks` button press
-        this.domAdapter.addEventListener(
-            this.domAdapter.getClearFinishedTasksButton(),
-            'click',
-            this._clearFinishedTasksButtonClickEventHandler.bind(this)
+        this.domAdapter.onClearFinishedTasksRequest(
+            this._clearFinishedTasksRequestHandler.bind(this)
         );
     }
 
-    _toggleTaskState(taskId) {
-        return (e) => {
-            e.preventDefault();
-            this.domAdapter.activateTaskDisplayMode(taskId);
-            this.state.toggleTaskState(taskId);
-        }
+    _toggleTaskState(task) {
+        this.domAdapter.activateTaskDisplayMode(task);
+        this.state.toggleTaskState(task.id);
     }
 
-    _updateTaskContent(taskId) {
-        this.domAdapter.activateTaskDisplayMode(taskId);
-        this.state.updateTaskContent(taskId, this.domAdapter.getTaskInputValue(taskId));
+    _updateTaskContent(task) {
+        this.domAdapter.activateTaskDisplayMode(task);
+        this.state.updateTaskContent(task.id, this.domAdapter.getTaskInputValue(task.id));
     }
 
-    _taskToDOMString(templateRenderer, task) {
-        return templateRenderer`
-            <li>
-                <input id=${task.id} type="checkbox" ?checked=${task.done} dir="auto">
-                <label for=${task.id} class="done" @click=${this._toggleTaskState(task.id)}></label>
-                <span class="text">
-                    <span class="content" @dblclick=${() => this.domAdapter.activateTaskEditMode(task.id)}>${task.content}</span>
-                    <span class="delete" @click=${() => this.state.deleteTask(task.id)}>&#128465;</span>
-                    <input type="text" class="" @dblclick=${() => this._updateTaskContent(task.id)} value=${task.content}>
-                </span>
-            </li>
-        `;
+    _deleteTask(task) {
+        this.state.deleteTask(task.id);
     }
 
     updateView() {
-        this.domAdapter.renderListToContainer(
-            this.state.tasks, 
-            this._taskToDOMString.bind(this),
-            this.domAdapter.getTasksList()
+        this.domAdapter.renderTasksList(
+            this.state.tasks,
+            {
+                taskStatusChangeRquestHandler: this._toggleTaskState.bind(this),
+                taskContentEndEditRequestHandler: this._updateTaskContent.bind(this),
+                deleteTaskRequestHandler: this._deleteTask.bind(this)
+            }
         );
     }
 }
