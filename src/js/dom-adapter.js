@@ -75,8 +75,8 @@ class Adapter {
     static renderTasksList(tasks, userDefinedHandlers = {}) {
         const defaultHandlers = {
             taskStatusChangeRquestHandler: () => {},
-            taskContentStartEditRequestHandler: this.activateTaskEditMode,
-            taskContentEndEditRequestHandler: this.activateTaskDisplayMode,
+            taskContentStartEditRequestHandler: this.activateTaskEditMode.bind(this),
+            taskContentEndEditRequestHandler: this.activateTaskDisplayMode.bind(this),
             deleteTaskRequestHandler: () => {}
         };
         const handlers = {
