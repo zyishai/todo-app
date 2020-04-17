@@ -1,11 +1,10 @@
 import { expect } from 'chai';
-import { createStubInstance, stub, spy } from 'sinon';
+import { stub, spy } from 'sinon';
 import { AppState } from '../src/js/state';
-import { Main } from '../src/js/main';
+import AppStateEvents from '../src/js/app-state-events';
 import { LocalStorageWrapper } from '../src/js/storage';
 
-setup(function() {
-    const MainStub = createStubInstance(Main);
+suiteSetup(function() {
     let store = {};
 
     const fakeLocalStorage = {
@@ -21,7 +20,11 @@ setup(function() {
     }
 
     globalThis.localStorage = fakeLocalStorage;
-    this.state = new AppState(new LocalStorageWrapper(), MainStub);
+});
+
+setup(function() {
+    this.state = new AppState(new LocalStorageWrapper());
+    spy(this.state);
 });
 
 test('initial state should come from `storage`', function() {
@@ -42,21 +45,25 @@ test('calling addNewTask() should call storage.persistTask()', function() {
     expect(this.state.storage.persistTask).to.be.called;
 });
 
-test('calling addNewTask() should call renderer.updateView()', function() {
+test('calling addNewTask() should emit `new task` event', function() {
     // act
     const task = this.state.addNewTask('Example task');
 
     // assert
-    expect(this.state.renderer.updateView).to.be.calledWith(task);
+    expect(this.state.emit).to.be.calledWith(AppStateEvents.NEW_TASK_EVENT, task);
 });
 
-test('calling toggleTaskState() should toggle `task.done` and call renderer.updateView with the task', function() {
+test('calling toggleTaskState() should toggle `task.done` and emit `task state changed` event with the task id, prev state and new state', function() {
     const task = this.state.addNewTask('Example');
 
     this.state.toggleTaskState(task.id);
 
     expect(task.done).to.be.true;
-    expect(this.state.renderer.updateView).to.be.calledWith(task);
+    expect(this.state.emit).to.be.deep.calledWith(AppStateEvents.TASK_STATE_CHANGED_EVENT, {
+        taskId: task.id,
+        prevState: false,
+        newState: true
+    });
 
     // should return task.done to be false
     this.state.toggleTaskState(task.id);
@@ -73,13 +80,17 @@ test('calling toggleTaskState() should call storage.updateTask', function() {
     expect(this.state.storage.updateTask).to.be.called;
 });
 
-test('calling updateTaskContent() should set task\'s content property and call renderer.updateView', function() {
+test('calling updateTaskContent() should set task\'s content property and emit `task content update` event', function() {
     const task = this.state.addNewTask('Example');
 
     this.state.updateTaskContent(task.id, 'Two words');
 
     expect(task.content).to.equal('Two words');
-    expect(this.state.renderer.updateView).to.be.called;
+    expect(this.state.emit).to.be.deep.calledWith(AppStateEvents.TASK_CONTENT_UPDATED_EVENT, {
+        taskId: task.id,
+        prevContent: 'Example',
+        newContent: 'Two words'
+    });
 });
 
 test('calling updateTaskContent() should call storage.updateTask', function() {
@@ -108,12 +119,14 @@ test('when calling deleteTask(), storage.deleteTask() should be called', functio
     expect(this.state.storage.deleteTask).to.be.calledWith(task.id);
 });
 
-test('when calling deletTask(), renderer.updateView() should be called', function() {
+test('when calling deleteTask(), `tasks deleted` event should be emitted', function() {
     const task = this.state.addNewTask('Test');
 
     this.state.deleteTask(task.id);
 
-    expect(this.state.renderer.updateView).to.be.calledWith(task.id);
+    expect(this.state.emit).to.be.deep.calledWith(AppStateEvents.TASKS_DELETED_EVENT, [
+        task.id
+    ]);
 });
 
 test('calling clearAllFinishedTasks() should remove all finished tasks', function() {
@@ -139,11 +152,11 @@ test('calling clearAllFinishedTasks() should call storage.clearAllFinishedTasks(
     expect(this.state.storage.clearAllFinishedTasks).to.be.called;
 });
 
-test('calling clearAllFinishedTasks() should call renderer.updateView()', function() {
+test('calling clearAllFinishedTasks() should emit `tasks deleted` event', function() {
     this.state.addNewTask('First task');
     this.state.addNewTask('Second task');
     this.state.addNewTask('Third task');
     this.state.clearAllFinishedTasks();
 
-    expect(this.state.renderer.updateView).to.be.called;
+    expect(this.state.emit).to.be.deep.calledWith(AppStateEvents.TASKS_DELETED_EVENT);
 });
