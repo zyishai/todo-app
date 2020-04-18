@@ -5,100 +5,102 @@ import AppStateEvents from './app-state-events';
 export class AppState extends EventEmitter {
     constructor(storage) {
         super();
-        if (storage) {
-            this.storage = storage;
-        }
 
-        this.tasks = this.storage ? storage.fetchAllTasks() : [];
+        this._tasks = []; // initial value
+        this.storage = storage;
+
+        // sync tasks from storage
+        this._syncFromStorage();
     }
 
-    newTaskEvent(newTaskEventHandler) {
-        this.addListener(AppStateEvents.NEW_TASK_EVENT, newTaskEventHandler);
+    async _syncFromStorage() {
+        this._tasks = await this.storage.fetchAllTasks()
+        this.emit(AppStateEvents.TASKS_SYNC, this._tasks);
     }
 
-    taskStateChangedEvent(taskStateChangedEventHandler) {
+    _getById(id) {
+        return this.tasks.find(task => task.id === id);
+    }
+
+    get tasks() {
+        return this._tasks;
+    }
+
+    onTasksSyncEvent(tasksSyncEventHandler) {
+        this.addListener(AppStateEvents.TASKS_SYNC, tasksSyncEventHandler);
+    }
+
+    onNewTaskEvent(newTaskEventHandler) {
+        this.addListener(AppStateEvents.NEW_TASK_ADDED_EVENT, newTaskEventHandler);
+    }
+
+    onTaskStateChangedEvent(taskStateChangedEventHandler) {
         this.addListener(AppStateEvents.TASK_STATE_CHANGED_EVENT, taskStateChangedEventHandler);
     }
 
-    taskContentUpdatedEvent(taskContentUpdatedEventHandler) {
+    onTaskContentUpdatedEvent(taskContentUpdatedEventHandler) {
         this.addListener(AppStateEvents.TASK_CONTENT_UPDATED_EVENT, taskContentUpdatedEventHandler);
     }
 
-    singleTaskDeletedEvent(singleTaskDeletedEventHandler) {
+    onSingleTaskDeletedEvent(singleTaskDeletedEventHandler) {
         this.addListener(AppStateEvents.TASKS_DELETED_EVENT, singleTaskDeletedEventHandler);
     }
 
-    multipleTasksDeletedEvent(multipleTasksDeletedEventHandler) {
+    onMultipleTasksDeletedEvent(multipleTasksDeletedEventHandler) {
         this.addListener(AppStateEvents.TASKS_DELETED_EVENT, multipleTasksDeletedEventHandler);
     }
 
-    setStorage(storage) {
-        this.storage = storage;
-    }
-
-    addNewTask(text) {
+    async addNewTask(text) {
         const task = new Task(text);
-        this.tasks.push(task);
-        if (this.storage) {
-            this.storage.persistTask(task);
-        }
-        this.emit(AppStateEvents.NEW_TASK_EVENT, task);
+        await this.storage.persistTask(task);
+        this.emit(AppStateEvents.NEW_TASK_ADDED_EVENT, task);
+        await this._syncFromStorage();
 
         return task;
     }
 
-    toggleTaskState(taskId) {
+    async toggleTaskState(taskId) {
         const eventPayload = {
             taskId,
             prevState: undefined,
             newState: undefined
         }
-        const task = this.getById(taskId);
+        const task = this._getById(taskId);
         eventPayload.prevState = task.done;
-        task.done = !task.done;
+        task.toggleState();
         eventPayload.newState = task.done;
-        if (this.storage) {
-            this.storage.updateTask(task);
-        }
+        await this.storage.updateTask(task);
         this.emit(AppStateEvents.TASK_STATE_CHANGED_EVENT, eventPayload);
+        await this._syncFromStorage();
     }
 
-    getById(id) {
-        return this.tasks.find(task => task.id === id);
-    }
-
-    updateTaskContent(taskId, text) {
+    async updateTaskContent(taskId, text) {
         const eventPayload = {
             taskId,
             prevContent: undefined,
             newContent: undefined
         }
-        const task = this.getById(taskId);
+        const task = this._getById(taskId);
         eventPayload.prevContent = task.content;
-        task.content = text;
+        task.setContent(text);
         eventPayload.newContent = task.content;
-        if (this.storage) {
-            this.storage.updateTask(task);
-        }
+        await this.storage.updateTask(task);
         this.emit(AppStateEvents.TASK_CONTENT_UPDATED_EVENT, eventPayload);
+        await this._syncFromStorage();
     }
 
-    deleteTask(taskId) {
-        if (this.storage) {
-            this.storage.deleteTask(taskId);
-            this.tasks = this.storage.fetchAllTasks();
-        }
+    async deleteTask(taskId) {
+        await this.storage.deleteTask(taskId);
         this.emit(AppStateEvents.TASKS_DELETED_EVENT, [taskId]);
+        await this._syncFromStorage();
     }
 
-    clearAllFinishedTasks() {
+    async clearAllFinishedTasks() {
         let deletedTasks = this.tasks.slice();
-        if (this.storage) {
-            this.storage.clearAllFinishedTasks();
-            this.tasks = this.storage.fetchAllTasks();
-            deletedTasks = deletedTasks.filter(task => 
-                !this.tasks.find(t => t.id === task.id));
-        }
+        await this.storage.clearAllFinishedTasks();
+        await this._syncFromStorage();
+        deletedTasks = deletedTasks.filter(task => 
+            !this.tasks.find(t => t.id === task.id));
         this.emit(AppStateEvents.TASKS_DELETED_EVENT, deletedTasks.map(task => task.id));
     }
 }
