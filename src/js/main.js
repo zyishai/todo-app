@@ -31,11 +31,7 @@ export class Main {
             this._clearFinishedTasksRequestHandler.bind(this)
         );
 
-        this.state.newTaskEvent(this.updateView.bind(this));
-        this.state.taskStateChangedEvent(this.updateView.bind(this));
-        this.state.taskContentUpdatedEvent(this.updateView.bind(this));
-        this.state.singleTaskDeletedEvent(this.updateView.bind(this));
-        this.state.multipleTasksDeletedEvent(this.updateView.bind(this));
+        this.state.onTasksSyncEvent(this.updateView.bind(this));
     }
 
     _toggleTaskState(task) {
