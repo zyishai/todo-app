@@ -32,3 +32,22 @@ test('when creating a task with three arguments, the `done` field should be init
 
     expect(task.done).to.be.true;
 });
+
+test('calling toggleState() should toggle the `done` field value', () => {
+    const task = new Task();
+    
+    task.toggleState();
+    expect(task.done).to.be.true;
+
+    task.toggleState();
+    expect(task.done).to.be.false;
+});
+
+test('calling setContent() should set the `content` field', () => {
+    const task = new Task();
+
+    expect(task.content).to.be.undefined;
+
+    task.setContent('Hello world');
+    expect(task.content).to.be.equal('Hello world');
+});
