@@ -17,6 +17,12 @@ export class StorageAdapter {
         });
     }
 
+    async resetDatabase() {
+        const docs = await this._getAllDocs();
+
+        return Promise.all(docs.rows.map(({ doc }) => this.db.remove(doc)));
+    }
+
     async fetchAllTasks() {
         const allDocs = await this._getAllDocs();
         return allDocs.rows.map(({ doc }) => new Task(doc.id, doc.content, doc.done));
