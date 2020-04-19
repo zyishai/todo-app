@@ -1,40 +1,30 @@
 /// <reference types="cypress" />
 
-it('should preserve added tasks in localStorage', () => {
-    cy.visit('http://localhost:1234');
+describe('Persistence', () => {
+    beforeEach(() => {
+        indexedDB.deleteDatabase('_pouch_test');
+        cy.visit('http://localhost:1234');
 
-    // making sure no previous tasks exists that might fail my test
-    localStorage.clear();
-
-    cy.get('.input > input').type('Example task');
-    cy.get('.btn').click();
-    cy.contains('Example task').should(() => {
-        const tasks = JSON.parse(localStorage.getItem('tasks'));
-        expect(tasks[0].content).to.be.equal('Example task');
+        // remove any previous tasks
+        cy.document().then(doc => {
+            doc.querySelectorAll('.tasks ul li').forEach(li => {
+                li.querySelector('label').click();
+                li.remove();
+            });
+        });
     });
 
-    // clearing my mess
-    localStorage.clear();
+    it('should persist a task after reload', () => {
+        cy.get('.input > input').type('Example task');
+        cy.get('.btn[type="submit"]').click();
+        cy.contains('Example task');
 
-    cy.end();
-});
+        cy.reload();
 
-it('should display tasks from localStorage', () => {
-    cy.visit('http://localhost:1234');
+        cy.contains('Example task');
+    });
 
-    // making sure no previous tasks exists that might fail my test
-    localStorage.clear();
-
-    cy.get('.input > input').type('Example task');
-    cy.get('.btn').click();
-    cy.contains('Example task');
-
-    cy.reload();
-
-    cy.contains('Example task');
-
-    // clearing my mess
-    localStorage.clear();
-
-    cy.end();
+    afterEach(() => {
+        cy.end();
+    });
 });
