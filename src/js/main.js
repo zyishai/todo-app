@@ -32,6 +32,7 @@ export class Main {
         );
 
         this.state.onTasksSyncEvent(this.updateView.bind(this));
+        this.state.initialStorageSync();
     }
 
     _toggleTaskState(task) {

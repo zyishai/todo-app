@@ -8,9 +8,6 @@ export class AppState extends EventEmitter {
 
         this._tasks = []; // initial value
         this.storage = storage;
-
-        // sync tasks from storage
-        this._syncFromStorage();
     }
 
     async _syncFromStorage() {
@@ -48,6 +45,10 @@ export class AppState extends EventEmitter {
 
     onMultipleTasksDeletedEvent(multipleTasksDeletedEventHandler) {
         this.addListener(AppStateEvents.TASKS_DELETED_EVENT, multipleTasksDeletedEventHandler);
+    }
+
+    initialStorageSync() {
+        this._syncFromStorage();
     }
 
     async addNewTask(text) {
