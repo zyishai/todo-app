@@ -1,34 +1,24 @@
 import { expect } from 'chai';
-import { stub, spy } from 'sinon';
+import { spy } from 'sinon';
 import { AppState } from '../src/js/state';
 import AppStateEvents from '../src/js/app-state-events';
 import { StorageAdapter } from '../src/js/storage';
 
-suiteSetup(function() {
-    let store = {};
-
-    const fakeLocalStorage = {
-        getItem: stub().callsFake(function(key) {
-            return store[key];
-        }),
-        setItem: stub().callsFake(function(key, value) {
-            store[key] = value + '';
-        }),
-        clear: stub().callsFake(function() {
-            store = {};
-        })
-    }
-
-    globalThis.localStorage = fakeLocalStorage;
-});
-
 setup(function() {
     // make sure that the tasks got loaded from the storage before
     // starting the tests.
-    return new Promise(resolve => {
-        this.state = new AppState(new StorageAdapter(''));
-        spy(this.state);
+    return new Promise(async (resolve) => {
+        // create storage adapter and state
+        this.storageAdapter = new StorageAdapter('test');
+        this.state = new AppState(this.storageAdapter);
+
+        // reset the db and register `sync` event listener
+        await this.storageAdapter.resetDatabase();
         this.state.onTasksSyncEvent(resolve);
+
+        // spy on state methods and start syncing from remote storage
+        spy(this.state);
+        this.state.initialStorageSync();
     });
 });
 
