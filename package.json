@@ -40,6 +40,7 @@
   "dependencies": {
     "@babel/runtime": "^7.9.2",
     "lit-html": "^1.2.1",
-    "pouchdb": "^7.2.1"
+    "pouchdb": "^7.2.1",
+    "pouchdb-find": "^7.2.1"
   }
 }
