@@ -1,8 +1,10 @@
+require('dotenv').config();
 import { Main } from './main';
 import litHtmlAdapter from './dom-adapter';
 import { AppState } from './state';
-import { LocalStorageWrapper } from './storage';
+import { StorageAdapter } from './storage';
 
 ;(function() {
-    Main.init(litHtmlAdapter, new AppState(new LocalStorageWrapper()));
+    const appState = new AppState(new StorageAdapter(process.env.REMOTE_STORAGE_URL));
+    Main.init(litHtmlAdapter, appState);
 })()
