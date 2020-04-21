@@ -6,22 +6,15 @@ describe('Deleting tasks', () => {
         cy.visit('http://localhost:1234');
 
         // remove any previous tasks
-        cy.document().then(doc => {
-            doc.querySelectorAll('.tasks ul li').forEach(li => {
-                li.querySelector('label').click();
-                li.remove();
-            });
-        });
+        cy.document().clearTaskItems();
     });
 
     it('should delete a task when clicking the garbage icon of that task', () => {
-        cy.get('.input > input').type('Example task');
-        cy.get('.btn').click();
+        cy.addTask('Example task');
 
-        cy.get('.tasks ul').should('contain.text', 'Example task');
+        cy.contains('Example task');
 
-        cy.withContent('.tasks ul li', 'Example task').find('.text .delete').click();
-        cy.wait(500);
+        cy.queryTasks().withContent('Example task').deleteTask();
 
         cy.get('.tasks ul').should('not.contain.text', 'Example task');
 
@@ -31,24 +24,22 @@ describe('Deleting tasks', () => {
     });
 
     it('should remove all the finished tasks when clicking the `clear all finished tasks` button', () => {
-        cy.get('.input > input').type('First task');
-        cy.get('.btn').click();
+        cy.addTask('First task');
 
-        cy.get('.input > input').type('Second task');
-        cy.get('.btn').click();
+        cy.addTask('Second task');
 
-        cy.get('.tasks ul').should('contain.text', 'First task');
-        cy.get('.tasks ul').should('contain.text', 'Second task');
+        cy.contains('First task');
+        cy.contains('Second task');
 
-        cy.withContent('.tasks ul li', 'Second task').find('label').click();
+        cy.queryTasks().withContent('Second task').toggleState();
         cy.get('.tasks .clear').click();
 
-        cy.get('.tasks ul').should('contain.text', 'First task');
+        cy.contains('First task');
         cy.get('.tasks ul').should('not.contain.text', 'Second task');
 
         cy.reload();
 
-        cy.get('.tasks ul').should('contain.text', 'First task');
+        cy.contains('First task');
         cy.get('.tasks ul').should('not.contain.text', 'Second task');
     });
 

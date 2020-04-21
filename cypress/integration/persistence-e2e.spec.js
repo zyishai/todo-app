@@ -6,17 +6,11 @@ describe('Persistence', () => {
         cy.visit('http://localhost:1234');
 
         // remove any previous tasks
-        cy.document().then(doc => {
-            doc.querySelectorAll('.tasks ul li').forEach(li => {
-                li.querySelector('label').click();
-                li.remove();
-            });
-        });
+        cy.document().clearTaskItems();
     });
 
     it('should persist a task after reload', () => {
-        cy.get('.input > input').type('Example task');
-        cy.get('.btn[type="submit"]').click();
+        cy.addTask('Example task');
         cy.contains('Example task');
 
         cy.reload();
