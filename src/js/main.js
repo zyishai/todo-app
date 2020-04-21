@@ -6,7 +6,6 @@ export class Main {
     constructor(domAdapter, state) {
         this.domAdapter = domAdapter;
         this.state = state;
-        this.state.setRenderer(this);
 
         this.registerGlobalListeners();
         this.updateView();
@@ -31,6 +30,9 @@ export class Main {
         this.domAdapter.onClearFinishedTasksRequest(
             this._clearFinishedTasksRequestHandler.bind(this)
         );
+
+        this.state.onTasksSyncEvent(this.updateView.bind(this));
+        this.state.initialStorageSync();
     }
 
     _toggleTaskState(task) {
