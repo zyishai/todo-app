@@ -8,6 +8,8 @@
  */
 import { html, render } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat';
+import trashIcon from '../img/trash.svg';
+import editIcon from '../img/edit.svg';
 
 class Adapter {
     static _getDOMElement(selector) {
@@ -37,21 +39,71 @@ class Adapter {
     static _getTasksList() {
         return this._getDOMElement('.tasks ul');
     }
+    static _getTasksListOverlay() {
+        return this._getDOMElement('.tasks .overlay');
+    }
+    static _getTaskActionsContainer() {
+        return this._getDOMElement('.tasks .task-actions');
+    }
+    static _getTaskActionsList() {
+        return this._getDOMElement('.tasks .task-actions ul');
+    }
     static _renderTask(handlers) {
-        return (task) => html`
-            <li>
-                <input id=${task.id} type="checkbox" ?checked=${task.done} dir="auto">
-                <label for=${task.id} class="done" @click=${(e) => {
-                    e.preventDefault();
-                    handlers.taskStatusChangeRquestHandler(task);
-                }}></label>
-                <span class="text">
-                    <span class="content" @dblclick=${() => handlers.taskContentStartEditRequestHandler(task)}>${task.content}</span>
-                    <span class="delete" @click=${() => handlers.deleteTaskRequestHandler(task)}>&#128465;</span>
-                    <input type="text" class="" @dblclick=${() => handlers.taskContentEndEditRequestHandler(task)} value=${task.content}>
-                </span>
-            </li>
-        `;
+        return (task) => {
+            const actions = [
+                {
+                    icon: trashIcon,
+                    label: 'Delete task',
+                    handler: () => handlers.deleteTaskRequestHandler(task)
+                },
+                {
+                    icon: editIcon,
+                    label: 'Edit task',
+                    handler: () => handlers.taskContentStartEditRequestHandler(task)
+                }
+            ];
+            return html`
+                <li>
+                    <input id=${task.id} type="checkbox" ?checked=${task.done} dir="auto">
+                    <label for=${task.id} class="done" @click=${(e) => {
+                        e.preventDefault();
+                        handlers.taskStatusChangeRquestHandler(task);
+                    }}></label>
+                    <span class="text">
+                        <span class="content" @click=${() => this._renderTaskActionsDrawer(actions)}>${task.content}</span>
+                        <input type="text" class="" @dblclick=${() => handlers.taskContentEndEditRequestHandler(task)} value=${task.content}>
+                    </span>
+                </li>
+            `;
+        }
+    }
+    static _renderTaskActionsDrawer(actions) {
+        // render actions to task actions list
+        render(html`
+                ${repeat(
+                    actions,
+                    action => action.label,
+                    action => html`
+                        <li @click=${() => {
+                            this._closeTaskActionsDrawer();
+                            action.handler()
+                        }}>
+                            <span class="icon">
+                                <img src=${action.icon} alt="action icon">
+                            </span>
+                            <span class="text">${action.label}</span>
+                        </li>
+                    `
+                )}
+        `, this._getTaskActionsList());
+
+        // activate overlay and show task actions list
+        this._getTasksListOverlay().classList.add('active');
+        this._getTaskActionsContainer().classList.add('active');
+    }
+    static _closeTaskActionsDrawer() {
+        this._getTasksListOverlay().classList.remove('active');
+        this._getTaskActionsContainer().classList.remove('active');
     }
     /** ===PUBLIC API=== */
     static onAddNewTaskRequest(newTaskRequestHandler) {
@@ -99,5 +151,8 @@ class Adapter {
         this._getDOMElement(`#${task.id} ~ .text input`).classList.add('active');
     }
 }
+
+// register global view listeners
+Adapter._getTasksListOverlay().addEventListener('click', Adapter._closeTaskActionsDrawer.bind(Adapter));
 
 export default Adapter;
