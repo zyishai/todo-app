@@ -113,11 +113,30 @@ body {
 }
 
 .container .tasks {
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow-y: hidden;
     padding-top: 1.5rem;
+}
+
+.container .tasks .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .6);
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0;
+    transition: .3s;
+}
+
+.container .tasks .overlay.active {
+    opacity: 1;
+    pointer-events: all;
 }
 
 .container .tasks .clear {
@@ -134,14 +153,14 @@ body {
     background-color: rgb(255, 212, 212);
 }
 
-.container .tasks ul {
+.container .tasks > ul {
     flex: 1;
     padding: 0;
     margin: 0;
     overflow-y: auto;
 }
 
-.container .tasks ul li {
+.container .tasks > ul li {
     position: relative;
     padding: 15px 0;
     -moz-user-select: none;
@@ -152,27 +171,27 @@ body {
     align-items: center;
 }
 
-.container .tasks ul li input[type="checkbox"] {
+.container .tasks > ul li input[type="checkbox"] {
     position: absolute;
     visibility: hidden;
 }
 
-.container .tasks ul li input[type="checkbox"]:checked + .done {
+.container .tasks > ul li input[type="checkbox"]:checked + .done {
     background: #eee url(../img/tick.svg);
     background-size: calc(100% - 14px);
     background-repeat: no-repeat;
     background-position: center;
 }
 
-.container .tasks ul li input[type="checkbox"]:checked ~ .text {
+.container .tasks > ul li input[type="checkbox"]:checked ~ .text {
     color: #ddd;
 }
 
-.container .tasks ul li input[type="checkbox"]:checked ~ .text .delete {
+/* .container .tasks > ul li input[type="checkbox"]:checked ~ .text .delete {
     display: none;
-}
+} */
 
-.container .tasks ul li .done {
+.container .tasks > ul li .done {
     position: relative;
     display: inline-block;
     width: 30px;
@@ -184,7 +203,7 @@ body {
     transition: background-size .3s;
 }
 
-.container .tasks ul li .text {
+.container .tasks > ul li .text {
     position: relative;
     display: inline-block;
     width: 100%;
@@ -193,23 +212,23 @@ body {
     transition: color .3s;
 }
 
-.container .tasks ul li .text .content {
+.container .tasks > ul li .text .content {
     font-size: 1.2rem;
     font-weight: 400;
     display: inline-block;
     flex: 1;
 }
 
-.container .tasks ul li .text .delete {
+/* .container .tasks > ul li .text .delete {
     cursor: pointer;
     transition: .3s;
 }
 
-.container .tasks ul li .text .delete:hover {
+.container .tasks > ul li .text .delete:hover {
     transform: scale(1.1);
-}
+} */
 
-.container .tasks ul li .text input {
+.container .tasks > ul li .text input {
     position: absolute;
     top: 0;
     left: 0;
@@ -223,12 +242,75 @@ body {
     outline: none;
 }
 
-.container .tasks ul li .text input.active {
+.container .tasks > ul li .text input.active {
     display: initial;
 }
 
-.container .tasks ul li input[type="checkbox"]:checked ~ .text input {
+.container .tasks > ul li input[type="checkbox"]:checked ~ .text input {
     display: none !important;
+}
+
+.container .tasks .task-actions {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    transform: translateY(110%);
+    background: #fff;
+    z-index: 5;
+    transition: .3s;
+    animation: task-actions-leave .3s ease-in-out forwards;
+}
+
+@keyframes task-actions-leave {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(110%);
+    }
+}
+
+.container .tasks .task-actions.active {
+    animation: task-actions-enter .3s ease-in-out forwards;
+}
+
+@keyframes task-actions-enter {
+    0% {
+        transform: translateY(110%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.task-actions ul {
+    padding: 10px 0;
+}
+
+.task-actions ul li {
+    display: block;
+    list-style: none;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.task-actions ul li:hover {
+    background-color: rgba(0, 0, 0, .05);
+}
+
+.task-actions ul li .icon {
+    display: inline-block;
+    padding: 8px;
+}
+
+.task-actions ul li .icon img {
+    vertical-align: middle;
+}
+
+.task-actions ul li .text {
+    vertical-align: middle;
+    font-weight: 400;
 }
 
 footer {
