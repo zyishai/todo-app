@@ -48,6 +48,9 @@ class Adapter {
     static _getTaskActionsList() {
         return this._getDOMElement('.tasks .task-actions ul');
     }
+    static _isThereTaskEdited() {
+        return this._getDOMElement('.text input.active') !== null;
+    }
     static _renderTask(handlers) {
         return (task) => {
             const actions = [
@@ -70,7 +73,7 @@ class Adapter {
                         handlers.taskStatusChangeRquestHandler(task);
                     }}></label>
                     <span class="text">
-                        <span class="content" @click=${() => !task.done && this._renderTaskActionsDrawer(actions)}>${task.content}</span>
+                        <span class="content" @click=${() => !task.done && !this._isThereTaskEdited() && this._renderTaskActionsDrawer(actions)}>${task.content}</span>
                         <input type="text" class="" @dblclick=${() => handlers.taskContentEndEditRequestHandler(task)} value=${task.content}>
                     </span>
                 </li>
