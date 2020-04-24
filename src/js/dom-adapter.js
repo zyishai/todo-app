@@ -70,7 +70,7 @@ class Adapter {
                         handlers.taskStatusChangeRquestHandler(task);
                     }}></label>
                     <span class="text">
-                        <span class="content" @click=${() => this._renderTaskActionsDrawer(actions)}>${task.content}</span>
+                        <span class="content" @click=${() => !task.done && this._renderTaskActionsDrawer(actions)}>${task.content}</span>
                         <input type="text" class="" @dblclick=${() => handlers.taskContentEndEditRequestHandler(task)} value=${task.content}>
                     </span>
                 </li>
