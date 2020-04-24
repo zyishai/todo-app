@@ -10,6 +10,8 @@ import { html, render } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat';
 import trashIcon from '../img/trash.svg';
 import editIcon from '../img/edit.svg';
+import confirmIcon from '../img/confirm.svg';
+import cancelIcon from '../img/x.svg';
 
 class Adapter {
     static _getDOMElement(selector) {
@@ -49,20 +51,20 @@ class Adapter {
         return this._getDOMElement('.tasks .task-actions ul');
     }
     static _isThereTaskEdited() {
-        return this._getDOMElement('.text input.active') !== null;
+        return this._getDOMElement('.text .input.active') !== null;
     }
     static _renderTask(handlers) {
         return (task) => {
             const actions = [
                 {
-                    icon: trashIcon,
-                    label: 'Delete task',
-                    handler: () => handlers.deleteTaskRequestHandler(task)
-                },
-                {
                     icon: editIcon,
                     label: 'Edit task',
                     handler: () => handlers.taskContentStartEditRequestHandler(task)
+                },
+                {
+                    icon: trashIcon,
+                    label: 'Delete task',
+                    handler: () => handlers.deleteTaskRequestHandler(task)
                 }
             ];
             return html`
@@ -74,7 +76,17 @@ class Adapter {
                     }}></label>
                     <span class="text">
                         <span class="content" @click=${() => !task.done && !this._isThereTaskEdited() && this._renderTaskActionsDrawer(actions)}>${task.content}</span>
-                        <input type="text" class="" @dblclick=${() => handlers.taskContentEndEditRequestHandler(task)} value=${task.content}>
+                        <div class="input">
+                            <input type="text" class="" value=${task.content}>
+                            <div class="actions">
+                                <span class="icon confirm" @click=${() => handlers.taskContentEndEditRequestHandler(task)}>
+                                    <img src=${confirmIcon} />
+                                </span>
+                                <span class="icon cancel" @click=${() => this.activateTaskDisplayMode(task)}>
+                                    <img src=${cancelIcon} />
+                                </span>
+                            </div>
+                        </div>
                     </span>
                 </li>
             `;
@@ -125,7 +137,7 @@ class Adapter {
         return this._getNewTaskInput().value;
     }
     static getTaskInputValue(taskId) {
-        return this._getDOMElement(`#${taskId} ~ .text input`).value;
+        return this._getDOMElement(`#${taskId} ~ .text .input input`).value;
     }
     static renderTasksList(tasks, userDefinedHandlers = {}) {
         const defaultHandlers = {
@@ -148,10 +160,11 @@ class Adapter {
         this._getNewTaskInput().value = '';
     }
     static activateTaskDisplayMode(task) {
-        this._getDOMElement(`#${task.id} ~ .text input`).classList.remove('active');
+        this._getDOMElement(`#${task.id} ~ .text .input`).classList.remove('active');
     }
     static activateTaskEditMode(task) {
-        this._getDOMElement(`#${task.id} ~ .text input`).classList.add('active');
+        this._getDOMElement(`#${task.id} ~ .text .input input`).value = task.content;
+        this._getDOMElement(`#${task.id} ~ .text .input`).classList.add('active');
     }
 }
 

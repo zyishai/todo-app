@@ -228,13 +228,23 @@ body {
     transform: scale(1.1);
 } */
 
-.container .tasks > ul li .text input {
+.container .tasks > ul li .text .input {
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
     width: 100%;
     display: none;
+    flex-direction: row;
+}
+
+.container .tasks > ul li .text .input.active {
+    display: flex;
+}
+
+.container .tasks > ul li .text .input input {
+    height: 100%;
+    width: 100%;
     font-size: 1.2rem;
     font-weight: 400;
     border: none;
@@ -243,8 +253,43 @@ body {
     outline: none;
 }
 
-.container .tasks > ul li .text input.active {
-    display: initial;
+.container .tasks > ul li .text .input .actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.container .tasks > ul li .text .input .actions .icon {
+    position: relative;
+    border-radius: 50%;
+    border: 1px solid #000;
+    height: 23px;
+    width: 23px;
+    margin-left: 7px;
+    cursor: pointer;
+}
+
+.container .tasks > ul li .text .input .actions .icon:hover {
+    filter: brightness(.8);
+}
+
+.container .tasks > ul li .text .input .actions .icon img {
+    height: 100%;
+    width: 100%;
+    padding: 3px;
+    object-fit: cover;
+}
+
+.container .tasks > ul li .text .input .actions .icon.confirm {
+    border-color: #389096;
+}
+
+.container .tasks > ul li .text .input .actions .icon.cancel {
+    border-color: #cf6f6f;
 }
 
 .container .tasks > ul li input[type="checkbox"]:checked ~ .text input {
