@@ -1,0 +1,84 @@
+.container .tasks {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+    padding-top: 1.5rem;
+}
+
+.container .tasks .clear {
+    display: block;
+    margin: 0 auto;
+    border: none;
+    outline: none;
+    padding: 3px 20px;
+    background-color: rgb(240, 198, 198);
+    cursor: pointer;
+}
+
+.container .tasks .clear:hover {
+    background-color: rgb(255, 212, 212);
+}
+
+.container .tasks > ul {
+    flex: 1;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+}
+
+.container .tasks > ul li {
+    position: relative;
+    padding: 15px 0;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.container .tasks > ul li input[type="checkbox"] {
+    position: absolute;
+    visibility: hidden;
+}
+
+.container .tasks > ul li input[type="checkbox"]:checked + .done {
+    background: #eee url(../img/tick.svg);
+    background-size: calc(100% - 14px);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.container .tasks > ul li input[type="checkbox"]:checked ~ .text {
+    color: #ddd;
+}
+
+.container .tasks > ul li .done {
+    position: relative;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin: 0 10px;
+    background: #eee;
+    background-size: 0;
+    border-radius: 50%;
+    transition: background-size .3s;
+}
+
+.container .tasks > ul li .text {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    transition: color .3s;
+}
+
+.container .tasks > ul li .text .content {
+    font-size: 1.2rem;
+    font-weight: 400;
+    display: inline-block;
+    flex: 1;
+}

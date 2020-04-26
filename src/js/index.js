@@ -1,5 +1,5 @@
 import { Main } from './main';
-import litHtmlAdapter from './dom-adapter';
+import litHtmlAdapter from './dom/adapter';
 import { AppState } from './state';
 import { StorageAdapter } from './storage';
 

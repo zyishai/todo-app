@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/overlay.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/tasks.css">
     <title>Todo App</title>
 </head>
 <body>
+    <div class="overlay"></div>
+    <div class="modal edit-task-modal"></div>
+    <div class="modal task-actions-modal"></div>
     <div class="container">
         <h1>Todo App</h1>
         <form>
@@ -17,7 +23,6 @@
         </form>
         <hr>
         <section class="tasks">
-            <div class="overlay"></div>
             <button class="clear">Delete all tasks</button>
             <ul></ul>
             <div class="task-actions">
