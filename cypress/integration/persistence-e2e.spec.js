@@ -2,11 +2,7 @@
 
 describe('Persistence', () => {
     beforeEach(() => {
-        indexedDB.deleteDatabase('_pouch_test');
-        cy.visit('http://localhost:1234');
-
-        // remove any previous tasks
-        cy.document().clearTaskItems();
+        cy.cleanStart();
     });
 
     it('should persist a task after reload', () => {

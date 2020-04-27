@@ -1,0 +1,127 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.container {
+    max-width: 800px;
+    min-width: 550px;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.container h1 {
+    padding: 0;
+    margin: 0;
+    margin-bottom: 1.5rem;
+    font-size: 4rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-align: center;
+    color: #333;
+}
+
+.container form {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.container form .input {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container form .input input {
+    display: inline-block;
+    width: 100%;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+    background-color: #e3e3e3;
+    height: 50px;
+    padding: 10px 30px;
+}
+
+.container form .input input::placeholder {
+    font-weight: 300;
+    font-size: 1.1rem;
+    line-height: 1.5rem;
+}
+
+.container form .input input:hover,
+.container form .input input:focus {
+    background-color: #efefef;
+}
+
+.container form .input input:focus::placeholder {
+    color: transparent;
+}
+
+.container form .btn[type="submit"] {
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-weight: 400;
+    background-color: rgb(247, 208, 176);
+    color: #333;
+    height: 50px;
+    line-height: 1rem;
+    padding: 5px 25px;
+    cursor: pointer
+}
+
+.container form .btn[type="submit"]:hover {
+    background-color: rgb(255, 218, 185);
+}
+
+.container hr {
+    width: 40%;
+    margin: 0 auto;
+    border: 0;
+    height: 1px;
+    background-color: rgb(220, 220, 220);
+}
+
+footer {
+    font-size: .7rem;
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        min-width: 300px;
+    }
+
+    .container form {
+        grid-template-columns: 1fr;
+    }
+
+    .container form .input input {
+        text-align: center;
+    }
+}

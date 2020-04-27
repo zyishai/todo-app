@@ -1,3 +1,4 @@
+/// <reference types="cypress" />
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -28,12 +29,13 @@
  * Clear all previous task items. Recommended to first remove
  * all local entries (e.g `indexedDB.deleteDatabase('...')`).
  */
-Cypress.Commands.add('clearTaskItems', {
-    prevSubject: 'document'
-}, (doc) => {
-    doc.querySelectorAll('.tasks ul li').forEach(li => {
-        li.querySelector('.delete').click();
-        li.remove();
+Cypress.Commands.add('cleanStart', () => {
+    indexedDB.deleteDatabase('_pouch_test');
+    cy.visit('http://localhost:1234');
+    cy.document().then(doc => {
+        doc.querySelectorAll('.tasks ul li').forEach(li => {
+            li.remove();
+        });
     });
 });
 
@@ -43,7 +45,7 @@ Cypress.Commands.add('clearTaskItems', {
  * @param {String} content - text for the task
  */
 Cypress.Commands.add('addTask', (content) => {
-    cy.get('.input > input').type(content);
+    cy.get('form .input > input').type(content);
     cy.get('form .btn[type="submit"]').click();
 });
 
@@ -77,34 +79,51 @@ Cypress.Commands.add('verifyNotChecked', { prevSubject: true }, (task) => {
     return cy.wrap(task);
 });
 
+Cypress.Commands.add('openTaskActionsMenu', { prevSubject: true }, (task) => {
+    cy.wrap(task).find('.text .content').click();
+    return cy.get('.task-actions-modal');
+});
+// ------------- TO BE CHANGED AS NECCESSARY -----------------
 Cypress.Commands.add('activateEditMode', { prevSubject: true }, (task) => {
-    cy.wrap(task).find('.text .content').dblclick();
-    return cy.wrap(task);
+    cy.wrap(task).openTaskActionsMenu().contains('Edit task').click();
+    cy.wrap(task).find('input[type="checkbox"]').invoke('attr', 'id').then(id => {
+        cy.setCookie('currentTaskId', id);
+    });
+    return cy.get('.edit-task-modal');
 });
 
-Cypress.Commands.add('deactivateEditMode', { prevSubject: true }, (task) => {
-    cy.wrap(task).find('.text input').dblclick();
-    return cy.wrap(task);
+Cypress.Commands.add('exitEditModeAndSave', { prevSubject: true }, (editModal) => {
+    cy.wrap(editModal).find('.actions > .confirm').click();
+    return cy.getCookie('currentTaskId').then(cookie => {
+        return cy.get(`#${cookie.value}`).parent();
+    });
 });
 
-Cypress.Commands.add('verifyDisplayMode', { prevSubject: true }, (task) => {
-    cy.wrap(task).find('.text .content').should('be.visible');
-    return cy.wrap(task);
+Cypress.Commands.add('exitEditModeWithoutSave', { prevSubject: true }, (editModal) => {
+    cy.wrap(editModal).find('.actions .cancel').click();
+    return cy.getCookie('currentTaskId').then(cookie => {
+        return cy.get(`#${cookie.value}`).parent();
+    });
 });
 
-Cypress.Commands.add('verifyEditMode', { prevSubject: true }, (task) => {
-    cy.wrap(task).find('.text input').should('be.visible');
-    return cy.wrap(task);
+Cypress.Commands.add('verifyDisplayMode', { prevSubject: true }, (element) => {
+    cy.get('.edit-task-modal').should('not.have.class', 'active');
+    return cy.wrap(element);
 });
 
-Cypress.Commands.add('updateValue', { prevSubject: true }, (task, value) => {
-    cy.wrap(task).find('.text input').type(value);
-    return cy.wrap(task);
+Cypress.Commands.add('verifyEditMode', { prevSubject: true }, (element) => {
+    cy.get('.edit-task-modal').should('have.class', 'active');
+    return cy.wrap(element);
 });
 
-Cypress.Commands.add('assertValue', { prevSubject: true }, (task, value) => {
-    cy.wrap(task).find('.text input').should('have.value', value);
-    return cy.wrap(task);
+Cypress.Commands.add('updateValue', { prevSubject: true }, (editModal, value) => {
+    cy.wrap(editModal).find('main textarea').type(value);
+    return cy.wrap(editModal);
+});
+
+Cypress.Commands.add('assertValue', { prevSubject: true }, (editModal, value) => {
+    cy.wrap(editModal).find('main textarea').should('have.value', value);
+    return cy.wrap(editModal);
 });
 
 Cypress.Commands.add('assertContent', { prevSubject: true }, (task, value) => {
@@ -113,6 +132,6 @@ Cypress.Commands.add('assertContent', { prevSubject: true }, (task, value) => {
 });
 
 Cypress.Commands.add('deleteTask', { prevSubject: true }, (task) => {
-    cy.wrap(task).find('.text .delete').click();
+    cy.wrap(task).openTaskActionsMenu().contains('Delete task').click();
     return cy.wrap(task);
 });

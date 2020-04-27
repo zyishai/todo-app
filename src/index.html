@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/overlay.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/tasks.css">
     <title>Todo App</title>
 </head>
 <body>
+    <div class="overlay"></div>
+    <div class="modal edit-task-modal"></div>
+    <div class="modal task-actions-modal"></div>
     <div class="container">
         <h1>Todo App</h1>
         <form>
@@ -18,52 +24,16 @@
         <hr>
         <section class="tasks">
             <button class="clear">Delete all tasks</button>
-            <ul>
-                <!-- <li>
-                    <input id="cb-1" type="checkbox" dir="auto">
-                    <label for="cb-1" class="done"></label>
-                    <span class="text">
-                        <span class="content">Call Partner to change mobile plan</span>
-                        <span class="delete">&#128465;</span>
-                        <input type="text">
-                    </span>
-                </li>
-                <li>
-                    <input id="cb-2" type="checkbox" dir="auto">
-                    <label for="cb-2" class="done"></label>
-                    <span class="text">
-                        <span class="content">Do homework 1 in ML</span>
-                        <span class="delete">&#128465;</span>
-                        <input type="text" class="" value="Do homework 1 in ML">
-                    </span>
-                </li>
-                <li>
-                    <input id="cb-3" type="checkbox" dir="auto">
-                    <label for="cb-3" class="done"></label>
-                    <span class="text">
-                        <span class="content">Call Jacob and start final project</span>
-                        <span class="delete">&#128465;</span>
-                        <input type="text">
-                    </span>
-                </li> -->
-            </ul>
+            <ul></ul>
+            <div class="task-actions">
+                <ul></ul>
+            </div>
         </section>
     </div>
     <footer>
         Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
     </footer>
 
-    <!-- <script>
-        const tasks = document.querySelectorAll('.tasks li .text');
-
-        tasks.forEach(task => {
-            task.addEventListener('dblclick', () => {
-                const edit = task.querySelector('.text input');
-                edit.classList.toggle('active');
-                edit.value = task.querySelector('.text span').textContent;
-            });
-        });
-    </script> -->
     <script src="js/index.js"></script>
 </body>
 </html>
