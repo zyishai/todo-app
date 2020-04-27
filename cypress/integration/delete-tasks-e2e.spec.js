@@ -2,11 +2,7 @@
 
 describe('Deleting tasks', () => {
     beforeEach(() => {
-        indexedDB.deleteDatabase('_pouch_test');
-        cy.visit('http://localhost:1234');
-
-        // remove any previous tasks
-        cy.document().clearTaskItems();
+        cy.cleanStart();
     });
 
     it('should delete a task when clicking the garbage icon of that task', () => {

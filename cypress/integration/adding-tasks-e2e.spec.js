@@ -2,11 +2,7 @@
 
 describe('Adding tasks', () => {
     beforeEach(() => {
-        indexedDB.deleteDatabase('_pouch_test');
-        cy.visit('http://localhost:1234');
-
-        // remove any previous tasks
-        cy.document().clearTaskItems();
+        cy.cleanStart();
     });
 
     it('should be able to add multiple tasks and control them separately', () => {
@@ -19,18 +15,14 @@ describe('Adding tasks', () => {
             .toggleState()
             .verifyChecked();
         
-            cy.queryTasks().withContent('Second task').verifyNotChecked();
+        cy.queryTasks().withContent('Second task').verifyNotChecked();
 
         // control content editing
-        cy.queryTasks().withContent('Second task').activateEditMode();
-
-        cy.queryTasks().withContent('First task').verifyDisplayMode();
-        
-        cy.queryTasks().withContent('Second task').verifyEditMode();
-        
-        cy.queryTasks().withContent('Second task').updateValue('{selectall}Changed');
-        
-        cy.queryTasks().withContent('Second task').deactivateEditMode();
+        cy.queryTasks().withContent('Second task')
+            .activateEditMode()
+            .verifyEditMode()
+            .updateValue('{selectall}Changed')
+            .exitEditModeAndSave();
         
         cy.contains('First task');
         

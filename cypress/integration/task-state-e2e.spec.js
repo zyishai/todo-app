@@ -2,11 +2,7 @@
 
 describe('Toggling tasks state', () => {
     beforeEach(() => {
-        indexedDB.deleteDatabase('_pouch_test');
-        cy.visit('http://localhost:1234');
-
-        // remove any previous tasks
-        cy.document().clearTaskItems();
+        cy.cleanStart();
     });
 
     it('should mark task as done when clicking the label of a task', () => {
@@ -14,7 +10,8 @@ describe('Toggling tasks state', () => {
         cy.addTask('Example task');
 
         cy.queryTasks().withContent('Example task')
-            .verifyNotChecked().toggleState()
+            .verifyNotChecked()
+            .toggleState()
             .verifyChecked();
     });
 
