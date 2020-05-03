@@ -3,36 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/overlay.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/top-header.css">
+    <link rel="stylesheet" href="css/categories.css">
+    <link rel="stylesheet" href="css/task-list.css">
     <link rel="stylesheet" href="css/modals.css">
-    <link rel="stylesheet" href="css/tasks.css">
-    <title>Todo App</title>
+    <link rel="stylesheet" href="css/task-actions-modal.css">
+    <link rel="stylesheet" href="css/task-edit-modal.css">
+    <link rel="stylesheet" href="css/new-task-modal.css">
+    <title>Todo app concept</title>
 </head>
 <body>
     <div class="overlay"></div>
-    <div class="modal edit-task-modal"></div>
     <div class="modal task-actions-modal"></div>
+    <div class="modal task-edit-modal"></div>
+    <div class="modal new-task-modal"></div>
     <div class="container">
-        <h1>Todo App</h1>
-        <form>
-            <div class="input">
-                <input type="text" placeholder="Describe your task">
+        <header>
+            <div class="logo">Scheduler</div>
+            <div class="avatar"></div>
+        </header>
+        <nav id="categories">
+            <header>
+                <h2>Categories</h2>
+                <button class="link-btn icon-btn">
+                    <span class="icon">
+                        <img src="img/plus_gray.svg" alt="plus icon">
+                    </span>
+                    <span class="text">
+                        Add
+                    </span>
+                </button>
+            </header>
+            <ul>
+                <li class="active">
+                    <a href="#">Default</a>
+                </li>
+            </ul>
+            <div class="new-category">
+                <input type="text" placeholder="Name of category">
+                <div class="actions">
+                    <button class="link-btn">
+                        <span class="text">
+                            cancel
+                        </span>
+                    </button>
+                    <button class="link-btn">
+                        <span class="text text-primary">
+                            add
+                        </span>
+                    </button>
+                </div>
             </div>
-            <button type="submit" class="btn">Add Task</button>
-        </form>
-        <hr>
-        <section class="tasks">
-            <button class="clear">Delete all tasks</button>
-            <ul></ul>
-            <div class="task-actions">
+        </nav>
+        <main id="task-list">
+            <header>
+                <h1>Default</h1>
+                <button class="btn btn-primary icon-btn">
+                    <span class="icon">
+                        <img src="img/plus_white.svg" alt="plus icon">
+                    </span>
+                    <span class="text">
+                        Add item
+                    </span>
+                </button>
+            </header>
+            <section>
                 <ul></ul>
-            </div>
-        </section>
+                <footer>
+                    <button class="btn link-btn icon-btn">
+                        <span class="icon">
+                            <img src="img/trash.svg" alt="trash icon">
+                        </span>
+                        <span class="text">
+                            Remove finished items
+                        </span>
+                    </button>
+                </footer>
+            </section>
+        </main>
     </div>
-    <footer>
-        Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
-    </footer>
 
     <script src="js/index.js"></script>
 </body>

@@ -11,9 +11,8 @@ export class Main {
         this.updateView();
     }
 
-    _addNewTaskRequestHandler() {
-        this.state.addNewTask(this.domAdapter.getNewTaskInputValue());
-        this.domAdapter.clearNewTaskInput();
+    _addNewTaskRequestHandler(newTask) {
+        this.state.addNewTask(newTask);
     }
 
     _clearFinishedTasksRequestHandler() {
@@ -21,6 +20,8 @@ export class Main {
     }
 
     registerGlobalListeners() {
+        this.domAdapter.initialize();
+        
         // `new task` form submittion -> add new task
         this.domAdapter.onAddNewTaskRequest(
             this._addNewTaskRequestHandler.bind(this)

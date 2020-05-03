@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --brand: rgba(158, 46, 255, 1);
+    --brand-middle: hsl(272, 87%, 65%);
+    --brand-light: hsl(272, 70%, 90%);
+    --auxilary: rgba(0, 0, 0, .1);
+    --text-dark: rgba(0, 0, 0, .95);
+    --text-base: rgba(0, 0, 0, .5);
+    --text-light: rgba(0, 0, 0, .3);
+    --gray-light: rgb(242, 242, 242);
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, .3);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+    transition: .5s;
+}
+
+.overlay.active {
+    opacity: 1;
+    pointer-events: all;
+    transition: .5s;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: min-content;
+    grid-template-columns: 25% 1fr;
+}
+
+.btn {
+    border: none;
+    outline: none;
+    padding: 10px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem; /* the reason for font-size be present here 
+                        is to set the base value for the `em` unit 
+                        that we i use in the .icon class */
+    transition: .2s;
+}
+
+.btn .text {
+    display: inline-block;
+    font-weight: 500;
+    letter-spacing: .5px;
+}
+
+.btn-primary {
+    background-color: var(--brand);
+}
+
+.btn-primary:hover {
+    background-color: var(--brand-middle);
+}
+
+.btn-primary .text {
+    color: #fff;
+}
+
+.btn-hover {
+    background-color: rgba(0, 0, 0, .05) !important;
+}
+
+.btn-hover:hover {
+    background-color: var(--auxilary) !important;
+}
+
+.btn-full-width {
+    width: 100% !important;
+    justify-content: center !important;
+}
+
+.link-btn {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: .85rem;
+}
+
+.link-btn .text {
+    display: inline-block;
+    color: var(--text-base);
+    font-weight: 600;
+    letter-spacing: .5px;
+}
+
+.icon-btn {
+    display: flex;
+    align-items: center;
+}
+
+.icon-btn .icon {
+    position: relative;
+    display: inline-block;
+    width: .75em;
+    margin-right: .3em;
+}
+
+.icon-btn .icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.text-primary {
+    color: var(--brand-middle) !important;
+}

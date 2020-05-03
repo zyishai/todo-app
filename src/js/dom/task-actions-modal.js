@@ -2,6 +2,7 @@ import { render, html } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat';
 import { DomUtils } from './utils';
 import { Overlay } from './overlay';
+import closeIcon from '../../img/x.svg';
 
 export class TaskActionsModal {
     static getModal() {
@@ -14,15 +15,14 @@ export class TaskActionsModal {
         // render actions to task actions list
         render(html`
                 <header>
-                    <h2>Task actions</h2>
-                    <span class="close" @click=${() => this.close()}></span>
+                    <h2>Actions</h2>
                 </header>
-                <div class="actions">
+                <section>
                     ${repeat(
                         actions,
                         action => action.label,
                         action => html`
-                            <button @click=${() => {
+                            <button class="btn icon-btn btn-hover btn-full-width" @click=${() => {
                                 this.close();
                                 action.handler()
                             }}>
@@ -33,7 +33,15 @@ export class TaskActionsModal {
                         </button>
                         `
                     )}
-                </div>
+                </section>
+                <footer>
+                    <button class="link-btn icon-btn" @click=${() => this.close()}>
+                        <span class="icon">
+                            <img src=${closeIcon} alt="close icon">
+                        </span>
+                        <span class="text">Close</span>
+                    </button>
+                </footer>
         `, this.getModal());
 
         // activate overlay and show task actions list

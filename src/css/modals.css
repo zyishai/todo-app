@@ -2,140 +2,18 @@
     position: absolute;
     top: 50%;
     left: 50%;
+    width: 50%;
+    max-width: 700px;
+    min-height: 50%;
     transform: translate(-50%, -50%) scale(0);
+    padding: 30px 50px;
     background-color: #fff;
-    box-shadow: 0 0 10px 2px rgba(0, 0, 0, .2);
-    padding: 20px;
-    transition: .3s;
-    z-index: 100;
-    display: grid;
-    grid-auto-flow: row;
-    row-gap: 20px;
-    justify-items: start;
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    z-index: 10;
+    transition: .5s;
 }
 
 .modal.active {
     transform: translate(-50%, -50%) scale(1);
-}
-
-.modal header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-
-.modal header span.close {
-    display: inline-block;
-    background: url(../img/x.svg) no-repeat;
-    background-position: center;
-    background-size: 15px;
-    height: 15px;
-    width: 15px;
-    align-self: flex-start;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 50%;
-    box-sizing: content-box;
-    transition: .3s;
-}
-
-.modal header span.close:hover {
-    background-color: rgb(228, 228, 228);
-}
-
-.modal header h2 {
-    font-weight: 600;
-    letter-spacing: .5px;
-}
-
-.modal main {
-    display: block;
-    min-width: 100%;
-}
-
-.modal main textarea {
-    display: inline-block;
-    min-height: 30px !important;
-    max-height: 300px;
-    width: 100%;
-    font-size: 1.2rem;
-    font-weight: 400;
-    border: none;
-    border-bottom: 1px solid #389096;
-    padding-bottom: 5px;
-    outline: none;   
-    resize: vertical;
-    transition: border .3s;
-}
-
-.modal main textarea:hover,
-.modal main textarea:active {
-    border-bottom-color: #53afb6;
-}
-
-.modal .actions {
-    display: grid;
-    grid-auto-flow: column;
-    column-gap: 10px;
-}
-
-.modal .actions button {
-    position: relative;
-    border: none;
-    outline: none;
-    font-size: 1em;
-    cursor: pointer;
-    padding: 5px 15px;
-    transition: .3s;
-}
-
-.modal .actions button.cancel {
-    color: rgb(215, 62, 62);
-    border: 1px solid rgb(215, 62, 62);
-}
-
-.modal .actions button.confirm {
-    color: #fff;
-    background-color: rgb(12, 130, 143);
-}
-
-.modal .actions button.cancel:hover {
-    color: rgb(228, 80, 80);
-    border: 1px solid rgb(228, 80, 80);
-}
-
-.modal .actions button.confirm:hover {
-    background-color: rgb(33, 147, 160);
-}
-
-.modal .actions button .text {
-    display: inline-block;
-    height: 15px;
-    line-height: 15px;
-    vertical-align: middle;
-}
-
-.modal .actions button .icon {
-    display: inline-block;
-    position: relative;
-    height: 15px;
-    width: 15px;
-    vertical-align: middle;
-}
-
-.modal .actions button .icon img {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-}
-
-.task-actions-modal .actions {
-    width: 100%;
-    grid-auto-flow: row;
-    row-gap: 10px;
-}
-
-.task-actions-modal .actions button:hover {
-    background-color: rgba(0, 0, 0, .1);
 }

@@ -12,11 +12,11 @@ import { TaskList } from './task-list';
 
 class Adapter {
     /** ===PUBLIC API=== */
+    static initialize() {
+        TaskForm.init();
+    }
     static onAddNewTaskRequest(newTaskRequestHandler) {
-        TaskForm.getForm().addEventListener('submit', e => {
-            e.preventDefault();
-            newTaskRequestHandler();
-        });
+        TaskForm.onSubmit(newTaskRequestHandler);
     }
     static onClearFinishedTasksRequest(clearFinishedTasksRequestHandler) {
         TaskList.getClearFinishedTasksButton().addEventListener('click', e => {
@@ -43,9 +43,9 @@ class Adapter {
         };
         return TaskList.renderList(tasks, handlers);
     }
-    static clearNewTaskInput() {
-        TaskForm.clearForm();
-    }
+    // static clearNewTaskInput() {
+    //     TaskForm.clearForm();
+    // }
     static activateTaskDisplayMode(task) {
         TaskEditModal.close();
     }

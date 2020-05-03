@@ -1,0 +1,94 @@
+#categories {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    border-right: 1px solid var(--auxilary);
+    padding: 30px 30px 30px 20px;
+    overflow: hidden;
+}
+
+#categories header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 2.5rem;
+    margin-bottom: 5px;
+    box-sizing: content-box;
+}
+
+#categories header h2 {
+    font-weight: 600;
+    letter-spacing: 1px;
+    font-size: 1.1rem;
+}
+
+#categories ul {
+    display: block;
+    margin: 10px 0;
+    overflow-y: auto;
+}
+
+#categories ul li {
+    list-style: none;
+    padding: 10px 30px;
+    border-radius: 8px;
+    transition: .2s;
+}
+
+#categories ul li:hover {
+    background-color: var(--gray-light);
+}
+
+#categories ul li a {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: var(--text-base);
+    font-weight: 500;
+    font-size: 1rem;
+    transition: .2s;
+}
+
+#categories ul li.active {
+    background-color: var(--brand-light);
+}
+
+#categories ul li.active a {
+    color: var(--brand);
+    font-weight: 600;
+}
+
+#categories .new-category {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    transform: scaleY(0);
+    transform-origin: top;
+    overflow: hidden;
+    transition: .2s;
+}
+
+#categories .new-category.active {
+    transform: scaleY(1);
+}
+
+#categories .new-category input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: .8rem;
+    letter-spacing: .5px;
+    background-color: transparent;
+    padding: 6px 10px;
+    background-color: var(--gray-light);
+    border-radius: 8px;
+}
+
+#categories .new-category .actions {
+    display: grid;
+    grid-auto-flow: column;
+    column-gap: 10px;
+    margin: 5px 8px;
+}
