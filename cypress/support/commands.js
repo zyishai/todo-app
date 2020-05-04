@@ -33,7 +33,7 @@ Cypress.Commands.add('cleanStart', () => {
     indexedDB.deleteDatabase('_pouch_test');
     cy.visit('http://localhost:1234');
     cy.document().then(doc => {
-        doc.querySelectorAll('.tasks ul li').forEach(li => {
+        doc.querySelectorAll('#task-list section ul li').forEach(li => {
             li.remove();
         });
     });
@@ -45,12 +45,15 @@ Cypress.Commands.add('cleanStart', () => {
  * @param {String} content - text for the task
  */
 Cypress.Commands.add('addTask', (content) => {
-    cy.get('form .input > input').type(content);
-    cy.get('form .btn[type="submit"]').click();
+    // open `new task` modal
+    cy.get('#task-list header').contains('button', 'Add item').click();
+
+    cy.get('.new-task-modal main textarea').type(content);
+    cy.get('.new-task-modal footer').contains('button', 'Save').click();
 });
 
 Cypress.Commands.add('queryTasks', () => {
-    cy.get('.tasks ul li');
+    cy.get('#task-list section ul li');
 });
 
 /**
@@ -58,14 +61,14 @@ Cypress.Commands.add('queryTasks', () => {
  * Example: `cy.withContent('My first task')`.
  */
 Cypress.Commands.add('withContent', {prevSubject: true}, (tasks, content) => {
-    return cy.wrap(tasks).contains(content).parentsUntil('.tasks ul li').last().parent();
+    return cy.wrap(tasks).contains('li', content);
 });
 
 /**
  * Toggle the state of a task item.
  */
 Cypress.Commands.add('toggleState', { prevSubject: true }, (task) => {
-    cy.wrap(task).find('label').click();
+    cy.wrap(task).find('label.done').click();
     return cy.wrap(task);
 });
 
@@ -80,39 +83,39 @@ Cypress.Commands.add('verifyNotChecked', { prevSubject: true }, (task) => {
 });
 
 Cypress.Commands.add('openTaskActionsMenu', { prevSubject: true }, (task) => {
-    cy.wrap(task).find('.text .content').click();
+    cy.wrap(task).find('.text').click();
     return cy.get('.task-actions-modal');
 });
 // ------------- TO BE CHANGED AS NECCESSARY -----------------
 Cypress.Commands.add('activateEditMode', { prevSubject: true }, (task) => {
-    cy.wrap(task).openTaskActionsMenu().contains('Edit task').click();
+    cy.wrap(task).openTaskActionsMenu().contains('button', 'Edit task').click();
     cy.wrap(task).find('input[type="checkbox"]').invoke('attr', 'id').then(id => {
         cy.setCookie('currentTaskId', id);
     });
-    return cy.get('.edit-task-modal');
+    return cy.get('.task-edit-modal');
 });
 
 Cypress.Commands.add('exitEditModeAndSave', { prevSubject: true }, (editModal) => {
-    cy.wrap(editModal).find('.actions > .confirm').click();
+    cy.wrap(editModal).contains('button', 'Update').click();
     return cy.getCookie('currentTaskId').then(cookie => {
         return cy.get(`#${cookie.value}`).parent();
     });
 });
 
 Cypress.Commands.add('exitEditModeWithoutSave', { prevSubject: true }, (editModal) => {
-    cy.wrap(editModal).find('.actions .cancel').click();
+    cy.wrap(editModal).contains('button', 'Cancel').click();
     return cy.getCookie('currentTaskId').then(cookie => {
         return cy.get(`#${cookie.value}`).parent();
     });
 });
 
 Cypress.Commands.add('verifyDisplayMode', { prevSubject: true }, (element) => {
-    cy.get('.edit-task-modal').should('not.have.class', 'active');
+    cy.get('.task-edit-modal').should('not.have.class', 'active');
     return cy.wrap(element);
 });
 
 Cypress.Commands.add('verifyEditMode', { prevSubject: true }, (element) => {
-    cy.get('.edit-task-modal').should('have.class', 'active');
+    cy.get('.task-edit-modal').should('have.class', 'active');
     return cy.wrap(element);
 });
 
@@ -127,7 +130,7 @@ Cypress.Commands.add('assertValue', { prevSubject: true }, (editModal, value) =>
 });
 
 Cypress.Commands.add('assertContent', { prevSubject: true }, (task, value) => {
-    cy.wrap(task).find('.text .content').should('contain.text', value);
+    cy.wrap(task).find('.text').should('contain.text', value);
     return cy.wrap(task);
 });
 

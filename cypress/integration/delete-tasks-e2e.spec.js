@@ -12,11 +12,11 @@ describe('Deleting tasks', () => {
 
         cy.queryTasks().withContent('Example task').deleteTask();
 
-        cy.get('.tasks ul').should('not.contain.text', 'Example task');
+        cy.queryTasks().should('not.contain.text', 'Example task');
 
         cy.reload();
 
-        cy.get('.tasks ul').should('not.contain.text', 'Example task');
+        cy.queryTasks().should('not.contain.text', 'Example task');
     });
 
     it('should remove all the finished tasks when clicking the `clear all finished tasks` button', () => {
@@ -28,15 +28,15 @@ describe('Deleting tasks', () => {
         cy.contains('Second task');
 
         cy.queryTasks().withContent('Second task').toggleState();
-        cy.get('.tasks .clear').click();
+        cy.get('#task-list section footer').contains('button', 'Remove').click();
 
         cy.contains('First task');
-        cy.get('.tasks ul').should('not.contain.text', 'Second task');
+        cy.queryTasks().should('not.contain.text', 'Second task');
 
         cy.reload();
 
         cy.contains('First task');
-        cy.get('.tasks ul').should('not.contain.text', 'Second task');
+        cy.queryTasks().should('not.contain.text', 'Second task');
     });
 
     afterEach(() => {
