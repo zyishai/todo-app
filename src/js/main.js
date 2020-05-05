@@ -1,11 +1,12 @@
 export class Main {
-    static init(domAdapter, state) {
-        return new Main(domAdapter, state);
+    static init(domAdapter, state, userManager) {
+        return new Main(domAdapter, state, userManager);
     }
 
-    constructor(domAdapter, state) {
+    constructor(domAdapter, state, userManager) {
         this.domAdapter = domAdapter;
         this.state = state;
+        this.userManager = userManager;
 
         this.registerGlobalListeners();
     }
@@ -18,7 +19,8 @@ export class Main {
         this.state.clearAllFinishedTasks();
     }
 
-    _loginRequestHandler() {
+    async _loginRequestHandler(loginData) {
+        this.userManager.login(loginData);
         this.domAdapter.initializeTasksPage();
 
         // `new task` form submittion -> add new task

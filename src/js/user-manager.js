@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 
 const credentialsKey = 'todo-credentials';
 
-export class User {
+export class UserManager {
     token;
 
     constructor(localstorage) {

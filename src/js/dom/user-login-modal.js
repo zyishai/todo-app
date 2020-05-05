@@ -22,7 +22,12 @@ export class UserLoginModal {
     }
     static login() {
         if (this.loginHandler) {
-            this.loginHandler();
+            const username = this._getModal().querySelector('input[type="text"]').value;
+            const password = this._getModal().querySelector('input[type="password"]').value;
+            this.loginHandler({
+                username,
+                password
+            });
         }
 
         this.close();
