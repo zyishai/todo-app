@@ -20,7 +20,7 @@ export class Main {
     }
 
     async _loginRequestHandler(loginData) {
-        this.userManager.login(loginData);
+        const userToken = this.userManager.login(loginData);
         this.domAdapter.initializeTasksPage();
 
         // `new task` form submittion -> add new task
@@ -34,7 +34,7 @@ export class Main {
         );
 
         this.state.onTasksSyncEvent(this.updateView.bind(this));
-        this.state.initialStorageSync();
+        this.state.syncStorageFrom(userToken);
     }
 
     registerGlobalListeners() {

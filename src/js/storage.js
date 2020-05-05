@@ -5,14 +5,15 @@ import { Task } from './task';
 PouchDB.plugin(PouchDBFind);
 
 export class StorageAdapter {
-    constructor(url) {
-        this.db = new PouchDB(url);
+    constructor(builder) {
+        this.urlBuilder = builder;
+        this.db = new PouchDB(this.urlBuilder.getUrl());
     }
 
-    async _getDocById(taskId) {
+    async _getDocById(id) {
         return await this.db.find({
             selector: {
-                id: taskId
+                id
             }
         }).then(res => res.docs[0]);
     }
@@ -22,6 +23,11 @@ export class StorageAdapter {
             include_docs: true,
             ...opts
         });
+    }
+
+    connectTo(userToken) {
+        this.urlBuilder.setDatabaseName('a' + userToken);
+        this.db = new PouchDB(this.urlBuilder.getUrl());
     }
 
     async resetDatabase() {
