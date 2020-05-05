@@ -9,11 +9,16 @@
 import { TaskForm } from './task-form';
 import { TaskEditModal } from './task-edit-modal';
 import { TaskList } from './task-list';
+import { IntroPage } from './intro-page';
+import { TasksPage } from './tasks-page';
 
 class Adapter {
     /** ===PUBLIC API=== */
-    static initialize() {
-        TaskForm.init();
+    static initializeIntroPage() {
+        IntroPage.init();
+    }
+    static initializeTasksPage() {
+        TasksPage.init();
     }
     static onAddNewTaskRequest(newTaskRequestHandler) {
         TaskForm.onSubmit(newTaskRequestHandler);
@@ -24,10 +29,10 @@ class Adapter {
             clearFinishedTasksRequestHandler();
         });
     }
-    static getNewTaskInputValue() {
-        return TaskForm.getInputValue();
+    static onLoginRequest(loginRequestHandler) {
+        IntroPage.onLogin(loginRequestHandler);
     }
-    static getTaskInputValue(taskId) {
+    static getTaskInputValue() {
         return TaskEditModal.getValue();
     }
     static renderTasksList(tasks, userDefinedHandlers = {}) {
@@ -43,10 +48,7 @@ class Adapter {
         };
         return TaskList.renderList(tasks, handlers);
     }
-    // static clearNewTaskInput() {
-    //     TaskForm.clearForm();
-    // }
-    static activateTaskDisplayMode(task) {
+    static activateTaskDisplayMode() {
         TaskEditModal.close();
     }
     static activateTaskEditMode(task, userDefinedHandlers) {

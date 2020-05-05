@@ -1,0 +1,86 @@
+@import url('https://css.gg/css?=|lock|profile');
+
+.user-login-modal header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.user-login-modal main {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.user-login-modal .input {
+    position: relative;
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    justify-items: center;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gray-darker);
+}
+
+.user-login-modal .input::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 0;
+    height: 2px;
+    background-color: var(--brand-middle);
+    z-index: 5;
+    transition: .3s;
+    transform-origin: left;
+}
+
+.user-login-modal .input.active::before {
+    width: 100%;
+}
+
+.user-login-modal .input i {
+    --ggs: .8;
+    color: var(--gray-darker);
+    transition: .3s;
+}
+
+.user-login-modal .input.active i {
+    color: var(--brand-middle);
+}
+
+.user-login-modal .input input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 1.1rem;
+    line-height: 1.1rem;
+    padding: 10px 10px;
+    background-color: transparent;
+}
+
+.user-login-modal .input .placeholder {
+    position: absolute;
+    top: calc(50% - .5rem);
+    left: 34px;
+    color: var(--gray-darker);
+    font-size: 1rem;
+    font-weight: 600;
+    z-index: -1;
+    transition: .3s;
+}
+
+.user-login-modal .input.active .placeholder {
+    color: var(--brand-middle);
+    font-size: .8rem;
+    top: -10px;
+}
+
+.user-login-modal footer {
+    margin-top: 30px;
+}
+
+.user-login-modal footer {
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: end;
+}

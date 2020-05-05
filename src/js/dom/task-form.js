@@ -57,9 +57,4 @@ export class TaskForm {
     static onSubmit(submitHandler) {
         this.submitHandler = submitHandler;
     }
-    static init() {
-        DomUtils._getDOMElement('#task-list header button').addEventListener('click', () => {
-            this.openForm();
-        });
-    }
 }

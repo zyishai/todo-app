@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/hero.css">
     <link rel="stylesheet" href="css/top-header.css">
     <link rel="stylesheet" href="css/categories.css">
     <link rel="stylesheet" href="css/task-list.css">
@@ -11,77 +12,33 @@
     <link rel="stylesheet" href="css/task-actions-modal.css">
     <link rel="stylesheet" href="css/task-edit-modal.css">
     <link rel="stylesheet" href="css/new-task-modal.css">
-    <title>Todo app concept</title>
+    <link rel="stylesheet" href="css/user-login-modal.css">
+    <title>Todo app</title>
 </head>
 <body>
     <div class="overlay"></div>
+    <div class="modal user-login-modal"></div>
     <div class="modal task-actions-modal"></div>
     <div class="modal task-edit-modal"></div>
     <div class="modal new-task-modal"></div>
     <div class="container">
         <header>
             <div class="logo">Scheduler</div>
-            <div class="avatar"></div>
+            <button class="link-btn">
+                <span class="text">login</span>
+            </button>
         </header>
-        <nav id="categories">
-            <header>
-                <h2>Categories</h2>
-                <button class="link-btn icon-btn">
-                    <span class="icon">
-                        <img src="img/plus_gray.svg" alt="plus icon">
-                    </span>
-                    <span class="text">
-                        Add
-                    </span>
-                </button>
-            </header>
-            <ul>
-                <li class="active">
-                    <a href="#">Default</a>
-                </li>
-            </ul>
-            <div class="new-category">
-                <input type="text" placeholder="Name of category">
-                <div class="actions">
-                    <button class="link-btn">
-                        <span class="text">
-                            cancel
-                        </span>
-                    </button>
-                    <button class="link-btn">
-                        <span class="text text-primary">
-                            add
-                        </span>
-                    </button>
-                </div>
+        <div class="content">
+            <div class="hero">
+                <h1>Beautiful. Simple. Powerful.</h1>
+                <p>
+                    <span class="highlight">Scheduler</span> let you manage
+                    your tasks with a ease. With beautiful display, simple layout and easy management,
+                    your tasks were never so easy to complete!
+                </p>
+                <p>Click on login above to get started!</p>
             </div>
-        </nav>
-        <main id="task-list">
-            <header>
-                <h1>Default</h1>
-                <button class="btn btn-primary icon-btn">
-                    <span class="icon">
-                        <img src="img/plus_white.svg" alt="plus icon">
-                    </span>
-                    <span class="text">
-                        Add item
-                    </span>
-                </button>
-            </header>
-            <section>
-                <ul></ul>
-                <footer>
-                    <button class="btn link-btn icon-btn">
-                        <span class="icon">
-                            <img src="img/trash.svg" alt="trash icon">
-                        </span>
-                        <span class="text">
-                            Remove finished items
-                        </span>
-                    </button>
-                </footer>
-            </section>
-        </main>
+        </div>
     </div>
 
     <script src="js/index.js"></script>

@@ -8,7 +8,6 @@ export class Main {
         this.state = state;
 
         this.registerGlobalListeners();
-        this.updateView();
     }
 
     _addNewTaskRequestHandler(newTask) {
@@ -19,9 +18,9 @@ export class Main {
         this.state.clearAllFinishedTasks();
     }
 
-    registerGlobalListeners() {
-        this.domAdapter.initialize();
-        
+    _loginRequestHandler() {
+        this.domAdapter.initializeTasksPage();
+
         // `new task` form submittion -> add new task
         this.domAdapter.onAddNewTaskRequest(
             this._addNewTaskRequestHandler.bind(this)
@@ -36,14 +35,23 @@ export class Main {
         this.state.initialStorageSync();
     }
 
+    registerGlobalListeners() {
+        this.domAdapter.initializeIntroPage();
+
+        // `login` button press
+        this.domAdapter.onLoginRequest(
+            this._loginRequestHandler.bind(this)
+        );
+    }
+
     _toggleTaskState(task) {
-        this.domAdapter.activateTaskDisplayMode(task);
+        this.domAdapter.activateTaskDisplayMode();
         this.state.toggleTaskState(task.id);
     }
 
     _updateTaskContent(task) {
-        this.domAdapter.activateTaskDisplayMode(task);
-        this.state.updateTaskContent(task.id, this.domAdapter.getTaskInputValue(task.id));
+        this.domAdapter.activateTaskDisplayMode();
+        this.state.updateTaskContent(task.id, this.domAdapter.getTaskInputValue());
     }
 
     _deleteTask(task) {
