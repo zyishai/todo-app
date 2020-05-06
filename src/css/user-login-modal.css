@@ -14,7 +14,7 @@
 .user-login-modal .input {
     position: relative;
     display: grid;
-    grid-template-columns: 24px 1fr;
+    grid-template-columns: 24px auto;
     justify-items: center;
     align-items: center;
     margin-bottom: 20px;
@@ -83,4 +83,17 @@
     display: grid;
     grid-auto-flow: column;
     justify-content: end;
+}
+
+.user-login-modal .checkbox {
+    display: grid;
+    grid-template-columns: min-content max-content;
+    column-gap: 10px;
+    align-items: center;
+}
+
+.user-login-modal .checkbox label {
+    font-size: .9rem;
+    font-weight: 500;
+    color: var(--gray-darker);
 }

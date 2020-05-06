@@ -20,7 +20,7 @@ export class UserManager {
         this.token = hash.update(`${username}:${password}`).digest('hex');
 
         if (persist && this.ls) {
-            this.ls.setItem(credentialsKey, hash);
+            this.ls.setItem(credentialsKey, JSON.stringify({token: this.token}));
         } else if (this.ls) {
             this.ls.removeItem(credentialsKey);
         }
@@ -30,7 +30,9 @@ export class UserManager {
 
     getUserToken() {
         if (!this.token) {
-            return this.ls.getItem(credentialsKey);
+            const credentials = JSON.parse(this.ls.getItem(credentialsKey));
+
+            return credentials && credentials.token;
         }
         
         return this.token;

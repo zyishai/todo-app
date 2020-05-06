@@ -11,16 +11,7 @@ export class Main {
         this.registerGlobalListeners();
     }
 
-    _addNewTaskRequestHandler(newTask) {
-        this.state.addNewTask(newTask);
-    }
-
-    _clearFinishedTasksRequestHandler() {
-        this.state.clearAllFinishedTasks();
-    }
-
-    async _loginRequestHandler(loginData) {
-        const userToken = this.userManager.login(loginData);
+    _performLogin(token) {
         this.domAdapter.initializeTasksPage();
 
         // `new task` form submittion -> add new task
@@ -34,16 +25,38 @@ export class Main {
         );
 
         this.state.onTasksSyncEvent(this.updateView.bind(this));
-        this.state.syncStorageFrom(userToken);
+        this.state.syncStorageFrom(token);
+    }
+
+    _addNewTaskRequestHandler(newTask) {
+        this.state.addNewTask(newTask);
+    }
+
+    _clearFinishedTasksRequestHandler() {
+        this.state.clearAllFinishedTasks();
+    }
+
+    async _loginRequestHandler(loginData) {
+        const userToken = this.userManager.login(loginData);
+        this._performLogin(userToken);
     }
 
     registerGlobalListeners() {
+        // We need to keep this event if we perform login,
+        // because we let the user re-login, and the intro page
+        // initialize the login modal... need redesign!
         this.domAdapter.initializeIntroPage();
 
         // `login` button press
         this.domAdapter.onLoginRequest(
             this._loginRequestHandler.bind(this)
         );
+
+        const savedToken = this.userManager.getUserToken();
+
+        if (savedToken) {
+            this._performLogin(savedToken);
+        }
     }
 
     _toggleTaskState(task) {
