@@ -1,11 +1,11 @@
 import { expect } from 'chai';
-import { mock, stub } from 'sinon';
+import { mock } from 'sinon';
 import { createHash } from 'crypto';
 
-import { User } from '../src/js/user';
+import { UserManager } from '../src/js/user-manager';
 
 setup(function() {
-    this.user = new User();
+    this.user = new UserManager();
 });
 
 test('calling login() without parameters should throw an error of "Missing username or password"', function() {
@@ -24,7 +24,7 @@ test('calling login() without persist should clear the localstorage (and not sav
     const localStorage = {
         removeItem: function() {}
     };
-    const user = new User(localStorage);
+    const user = new UserManager(localStorage);
     const m = mock(localStorage).expects("removeItem").once().withArgs('todo-credentials');
 
     user.login({
@@ -39,7 +39,7 @@ test('calling login() with persist should save the hash in localstorage', functi
     const localStorage = {
         setItem: function() {}
     }
-    const user = new User(localStorage);
+    const user = new UserManager(localStorage);
     const mockedLocalStorage = mock(localStorage);
     mockedLocalStorage.expects('setItem').once().withArgs('todo-credentials');
 
@@ -64,10 +64,12 @@ test('calling login() and afterwards getUserToken() should return the calculated
 test('calling getUserToken() without login() before, should return hash from localstorage (if exists)', function() {
     const localStorage = {
         getItem: function() {
-            return 'hash';
+            return JSON.stringify({
+                token: 'hash'
+            });
         }
     };
-    const user = new User(localStorage);
+    const user = new UserManager(localStorage);
 
-    expect(user.getUserToken()).equal(localStorage.getItem());
+    expect(user.getUserToken()).equal(JSON.parse(localStorage.getItem('todo-credentials')).token);
 });

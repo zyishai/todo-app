@@ -2,7 +2,6 @@ import { render, html } from 'lit-html';
 
 import { TaskForm } from "./task-form";
 import { DomUtils } from './utils';
-import plusGrayIcon from '../../img/plus_gray.svg';
 import plusWhiteIcon from '../../img/plus_white.svg';
 import trashIcon from '../../img/trash.svg';
 
@@ -13,39 +12,14 @@ export class TasksPage {
     static init() {
         render(html`
             <div class="main-page">
-                <nav id="categories">
-                    <header>
-                        <h2>Categories</h2>
-                        <button class="link-btn icon-btn">
-                            <span class="icon">
-                                <img src=${plusGrayIcon} alt="plus icon">
-                            </span>
-                            <span class="text">
-                                Add
-                            </span>
-                        </button>
-                    </header>
-                    <ul>
-                        <!-- <li class="active">
-                            <a href="#">Default</a>
-                        </li> -->
-                    </ul>
-                    <div class="new-category">
-                        <input type="text" placeholder="Name of category">
-                        <div class="actions">
-                            <button class="link-btn">
-                                <span class="text">
-                                    cancel
-                                </span>
-                            </button>
-                            <button class="link-btn">
-                                <span class="text text-primary">
-                                    add
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                </nav>
+                <div id="categories">
+                    <nav>
+                        <header>
+                            <h2>Categories</h2>
+                        </header>
+                        <ul></ul>
+                    </nav>
+                </div>
                 <main id="task-list">
                     <header>
                         <h1>Default</h1>

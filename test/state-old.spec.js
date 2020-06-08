@@ -1,15 +1,16 @@
 import { expect } from 'chai';
 import { spy } from 'sinon';
-import { AppState } from '../src/js/state';
+import { AppState } from '../src/js/state-old';
 import AppStateEvents from '../src/js/app-state-events';
-import { StorageAdapter } from '../src/js/storage';
+import { StorageAdapter } from '../src/js/storage-old';
+import { UrlBuilder } from '../src/js/url-builder';
 
 setup(function() {
     // make sure that the tasks got loaded from the storage before
     // starting the tests.
     return new Promise(async (resolve) => {
         // create storage adapter and state
-        this.storageAdapter = new StorageAdapter('test');
+        this.storageAdapter = new StorageAdapter(new UrlBuilder());
         this.state = new AppState(this.storageAdapter);
 
         // reset the db and register `sync` event listener
@@ -18,7 +19,7 @@ setup(function() {
 
         // spy on state methods and start syncing from remote storage
         spy(this.state);
-        this.state.initialStorageSync();
+        this.state._syncFromStorage();
     });
 });
 

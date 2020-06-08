@@ -26,6 +26,20 @@ export class UrlBuilder {
         return this;
     }
 
+    getLocalUrl() {
+        return this.databaseName;
+    }
+
+    getRemoteUrl() {
+        if (!this.host) {
+            return null;
+        }
+
+        return this.username && this.password
+            ? `http://${this.username}:${this.password}@${this.host}/${this.databaseName}`
+            : `http://${this.host}/${this.databaseName}`;
+    }
+
     getUrl() {
         return this.host 
             ? this.username && this.password

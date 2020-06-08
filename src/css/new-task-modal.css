@@ -26,5 +26,6 @@
 .new-task-modal footer {
     display: grid;
     grid-auto-flow: column;
+    column-gap: 10px;
     justify-content: end;
 }
