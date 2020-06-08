@@ -47,8 +47,10 @@ export class AppState extends EventEmitter {
         this.addListener(AppStateEvents.TASKS_DELETED_EVENT, multipleTasksDeletedEventHandler);
     }
 
-    initialStorageSync() {
-        this._syncFromStorage();
+    async syncStorageFrom(db) {
+        this.storage.connectTo(db);
+        this._tasks = await this.storage.fetchAllTasks()
+        this.emit(AppStateEvents.TASKS_SYNC, this._tasks);
     }
 
     async addNewTask(text) {

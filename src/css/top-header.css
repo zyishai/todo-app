@@ -16,9 +16,6 @@
     text-transform: uppercase;
 }
 
-.container > header .avatar {
-    height: 35px;
-    width: 35px;
-    background-color: var(--auxilary);
-    border-radius: 50%;
+.container > header .link-btn {
+    background-color: var(--gray-light);
 }

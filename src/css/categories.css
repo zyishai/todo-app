@@ -1,14 +1,26 @@
+.main-page {
+    overflow: hidden;
+}
 #categories {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+#categories nav {
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    border-right: 1px solid var(--auxilary);
+    height: 100%;
+    width: 100%;
     padding: 30px 30px 30px 20px;
+    border-right: 1px solid var(--auxilary);
     overflow: hidden;
 }
 
-#categories header {
+#categories nav header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -17,30 +29,30 @@
     box-sizing: content-box;
 }
 
-#categories header h2 {
+#categories nav header h2 {
     font-weight: 600;
     letter-spacing: 1px;
     font-size: 1.1rem;
 }
 
-#categories ul {
+#categories nav ul {
     display: block;
     margin: 10px 0;
     overflow-y: auto;
 }
 
-#categories ul li {
+#categories nav ul li {
     list-style: none;
     padding: 10px 30px;
     border-radius: 8px;
     transition: .2s;
 }
 
-#categories ul li:hover {
+#categories nav ul li:hover {
     background-color: var(--gray-light);
 }
 
-#categories ul li a {
+#categories nav ul li a {
     display: inline-block;
     width: 100%;
     height: 100%;
@@ -51,16 +63,16 @@
     transition: .2s;
 }
 
-#categories ul li.active {
+#categories nav ul li.active {
     background-color: var(--brand-light);
 }
 
-#categories ul li.active a {
+#categories nav ul li.active a {
     color: var(--brand);
     font-weight: 600;
 }
 
-#categories .new-category {
+/* #categories nav .new-category {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -70,11 +82,11 @@
     transition: .2s;
 }
 
-#categories .new-category.active {
+#categories nav .new-category.active {
     transform: scaleY(1);
 }
 
-#categories .new-category input {
+#categories nav .new-category input {
     border: none;
     outline: none;
     width: 100%;
@@ -86,9 +98,9 @@
     border-radius: 8px;
 }
 
-#categories .new-category .actions {
+#categories nav .new-category .actions {
     display: grid;
     grid-auto-flow: column;
     column-gap: 10px;
     margin: 5px 8px;
-}
+} */
