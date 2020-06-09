@@ -7,14 +7,14 @@ import {Task} from '../task';
 PouchDB.plugin(PouchDBFind);
 
 class TasksStorage {
-  constructor(localUrl, remoteUrl) {
+  constructor(localUrl, remoteUrl, localOpts, remoteOpts) {
     if (!localUrl.trim()) {
       throw new Error('TasksStorage initialized without local url.');
     }
     this.localUrl = localUrl;
     this.remoteUrl = remoteUrl;
 
-    this.localDB = new PouchDB(this.localUrl);
+    this.localDB = new PouchDB(this.localUrl, localOpts);
 
     /**
      * @type {BehaviorSubject<{id, content, done, _id, _rev}[]>}
@@ -22,7 +22,7 @@ class TasksStorage {
     this._tasks$ = new BehaviorSubject(null);
 
     if (this.remoteUrl) {
-      this.remoteDB = new PouchDB(this.remoteUrl);
+      this.remoteDB = new PouchDB(this.remoteUrl, remoteOpts);
 
       PouchDB.sync(this.remoteDB, this.localDB, {live: true}).on(
         'complete',

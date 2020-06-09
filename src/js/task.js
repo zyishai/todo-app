@@ -3,6 +3,10 @@ import {randomBytes} from 'crypto';
 export class Task {
   static empty = null;
 
+  static from({id, content, done}) {
+    return new Task(id, content, done);
+  }
+
   constructor(...args) {
     if (args.length >= 3) {
       this.id = String(args[0]);
