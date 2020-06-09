@@ -1,48 +1,74 @@
 import {expect} from 'chai';
 import {TasksStorage} from '../src/js/storage/tasks';
 import {UrlBuilder} from '../src/js/url-builder';
+import {Task} from '../src/js/task';
 
-require('dotenv').config({
-  path: '.env.local',
-});
+/**
+ * @type {TasksStorage}
+ */
+let storage = null;
 
-test('calling `connectTo()`, set the local and remote databases to the token specified', async function () {
-  const urlBuilder = new UrlBuilder();
-  const storage = new TasksStorage(urlBuilder);
-  storage.connectTo('__mocha__');
+suite('Tasks Storage', () => {
+  setup(async function () {
+    const builder = new UrlBuilder().setDatabaseName('__mocha__');
+    storage = new TasksStorage(builder.getUrl());
+  });
 
-  const localDatabaseInfo = await storage.localDatabase.info();
-  const localDatabaseName = localDatabaseInfo.db_name;
-  expect(localDatabaseName).to.equal('a__mocha__');
+  test('upon initialization a storage should pass tasks data to tasks observable', (done) => {
+    storage.tasks.subscribe((res) => {
+      if (res) {
+        done(null);
+      }
+    });
+  });
 
-  const remoteDatabaseInfo = await storage.remoteDatabase.info();
-  const remoteDatabaseName = remoteDatabaseInfo.db_name;
-  expect(remoteDatabaseName).to.equal(urlBuilder.getRemoteUrl());
-});
+  test('saving a task should emit observable value', async () => {
+    const task = new Task('unit test');
+    await storage.save(task);
 
-test.skip('calling `connectTo()` should emit tasks from the newly connected database', function (done) {
-  const urlBuilder = new UrlBuilder();
-  const storage = new TasksStorage(urlBuilder);
-  storage.connectTo('__mocha__');
-  storage.tasks.subscribe(
-    (data) => {
-      expect(Array.isArray(data)).to.be.true;
-      done();
-    },
-    (err) => {
-      console.error(err.toString());
-      done();
-    },
-    () => {
-      console.log('Finished!');
-      done();
-    },
-  );
-});
+    const tasks = storage._tasks$.value;
+    expect(tasks.find((t) => t.id === task.id)).to.have.property(
+      'content',
+      task.content,
+    );
+    expect(tasks.find((t) => t.id === task.id)).to.have.property(
+      'done',
+      task.done,
+    );
+  });
 
-teardown(async function () {
-  const storage = new TasksStorage(new UrlBuilder());
-  storage.connectTo('__mocha__');
+  test('updating a task should emit observable value', async () => {
+    const task = new Task('unit test');
+    await storage.save(task);
+    task.toggleState();
+    await storage.update(task);
+    expect(
+      storage._tasks$.value.find((t) => t.id === task.id),
+    ).to.have.property('done', task.done);
+  });
 
-  await storage.remoteDatabase.destroy();
+  test('deleting a task should emit observable value', async () => {
+    const task = new Task('unit test');
+    await storage.save(task);
+    await storage.delete(task);
+    expect(storage._tasks$.value.find((t) => t.id === task.id)).to.be.undefined;
+  });
+
+  test('calling clearStorage should remove all docs', async () => {
+    const firstTask = new Task('unit test 1');
+    const secondTask = new Task('unit test 2');
+
+    await storage.save(firstTask, secondTask);
+    await storage.clearStorage();
+
+    expect(storage._tasks$.value).to.be.empty;
+  });
+
+  teardown(async function () {
+    await storage.localDB.destroy();
+
+    if (storage.remoteDB) {
+      await storage.remoteDB.destroy();
+    }
+  });
 });
