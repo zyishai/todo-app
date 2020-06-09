@@ -10,6 +10,9 @@ export class State {
     this.storage = storage;
   }
 
+  // TODO:
+  syncStorageFrom(token) {}
+
   get tasks() {
     return this.storage.tasks;
   }

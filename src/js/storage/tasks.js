@@ -24,10 +24,12 @@ class TasksStorage {
     if (this.remoteUrl) {
       this.remoteDB = new PouchDB(this.remoteUrl, remoteOpts);
 
-      PouchDB.sync(this.remoteDB, this.localDB, {live: true}).on(
-        'complete',
-        () => this.fetchAll(),
-      );
+      // PouchDB.sync(this.localDB, this.remoteDB, {live: true}).on(
+      //   'active',
+      //   () => {
+      //     this.fetchAll();
+      //   },
+      // );
     }
   }
 
@@ -35,10 +37,9 @@ class TasksStorage {
    * @returns {Observable<{id, content, done, _id, _rev}[]>}
    */
   get tasks() {
-    if (!this.remoteDB) {
-      // initial fetch. the lazy pattern ensures that this is called only once.
-      this.fetchAll();
-    }
+    // initial fetch. the lazy pattern ensures that this is called only once.
+    this.fetchAll();
+
     // lazy getter/value pattern
     delete this.tasks;
     Object.defineProperty(this, 'tasks', {
@@ -46,6 +47,9 @@ class TasksStorage {
     });
     return this.tasks;
   }
+
+  // TODO:
+  connectTo(db) {}
 
   fetchAll() {
     return this.localDB
@@ -78,10 +82,12 @@ class TasksStorage {
    * @param {Task[]} tasks
    */
   async save(...tasks) {
-    const res = await this.localDB.bulkDocs(tasks.map((task) => task.toJSON()));
-    if (!this.remoteDB) {
-      await this.fetchAll();
-    }
+    const jsonTasks = tasks.map((task) => task.toJSON());
+    const res = await this.localDB.bulkDocs(jsonTasks);
+
+    // no `await` so the slow change in remote will happen asynchronously!
+    this.remoteDB.bulkDocs(jsonTasks);
+    await this.fetchAll();
   }
 
   /**
@@ -98,9 +104,9 @@ class TasksStorage {
       }),
     );
     const res = await this.localDB.bulkDocs(updatedTasks);
-    if (!this.remoteDB) {
-      await this.fetchAll();
-    }
+
+    this.remoteDB.bulkDocs(updatedTasks);
+    await this.fetchAll();
   }
 
   /**
@@ -118,9 +124,9 @@ class TasksStorage {
       }),
     );
     const res = await this.localDB.bulkDocs(updatedTasks);
-    if (!this.remoteDB) {
-      await this.fetchAll();
-    }
+
+    this.remoteDB.bulkDocs(updatedTasks);
+    await this.fetchAll();
   }
 
   async clearStorage() {
@@ -139,9 +145,8 @@ class TasksStorage {
           })
         : Promise.resolve(),
     );
-    if (!this.remoteDB) {
-      await this.fetchAll();
-    }
+
+    await this.fetchAll();
   }
 
   closeConnection() {
