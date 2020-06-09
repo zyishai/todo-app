@@ -12,12 +12,15 @@ suite('Tasks Storage', () => {
   setup(async function () {
     const builder = new UrlBuilder().setDatabaseName('__mocha__');
     storage = new TasksStorage(builder.getUrl());
+    await storage.clearStorage();
   });
 
   test('upon initialization a storage should pass tasks data to tasks observable', (done) => {
-    storage.tasks.subscribe((res) => {
-      if (res) {
+    let times = 0;
+    storage.tasks.subscribe(function (res) {
+      if (res && times === 0) {
         done(null);
+        times++;
       }
     });
   });
