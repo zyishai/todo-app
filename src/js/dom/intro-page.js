@@ -1,10 +1,24 @@
-import {UserLoginModal} from './user-login-modal'
+import {render, html} from 'lit-html';
+import {DomUtils} from './utils';
 
 export class IntroPage {
-  static init() {
-    UserLoginModal.init()
+  static _getContentDiv() {
+    return DomUtils._getDOMElement('.container .content');
   }
-  static onLogin(loginRequestHandler) {
-    UserLoginModal.onLogin(loginRequestHandler)
+  static render() {
+    render(
+      html`
+        <div class="hero">
+          <h1>Beautiful. Simple. Powerful.</h1>
+          <p>
+            <span class="highlight">Scheduler</span> let you manage your tasks
+            with a ease. With beautiful display, simple layout and easy
+            management, your tasks were never so easy to complete!
+          </p>
+          <p>Click on login above to get started!</p>
+        </div>
+      `,
+      this._getContentDiv(),
+    );
   }
 }

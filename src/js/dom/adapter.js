@@ -11,14 +11,18 @@ import {TaskEditModal} from './task-edit-modal';
 import {TaskList} from './task-list';
 import {IntroPage} from './intro-page';
 import {TasksPage} from './tasks-page';
+import {UserLoginModal} from './user-login-modal';
 
 class Adapter {
   /** ===PUBLIC API=== */
-  static initializeIntroPage() {
-    IntroPage.init();
+  static initGlobal() {
+    UserLoginModal.init();
   }
-  static initializeTasksPage() {
-    TasksPage.init();
+  static renderIntroPage() {
+    IntroPage.render();
+  }
+  static renderTasksPage() {
+    TasksPage.render();
   }
   static onAddNewTaskRequest(newTaskRequestHandler) {
     TaskForm.onSubmit(newTaskRequestHandler);
@@ -30,7 +34,7 @@ class Adapter {
     });
   }
   static onLoginRequest(loginRequestHandler) {
-    IntroPage.onLogin(loginRequestHandler);
+    UserLoginModal.onLogin(loginRequestHandler);
   }
   static getTaskInputValue() {
     return TaskEditModal.getValue();
