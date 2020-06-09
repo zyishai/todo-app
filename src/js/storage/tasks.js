@@ -85,8 +85,10 @@ class TasksStorage {
     const jsonTasks = tasks.map((task) => task.toJSON());
     const res = await this.localDB.bulkDocs(jsonTasks);
 
-    // no `await` so the slow change in remote will happen asynchronously!
-    this.remoteDB.bulkDocs(jsonTasks);
+    if (this.remoteDB) {
+      // no `await` so the slow change in remote will happen asynchronously!
+      this.remoteDB.bulkDocs(jsonTasks);
+    }
     await this.fetchAll();
   }
 
@@ -105,7 +107,9 @@ class TasksStorage {
     );
     const res = await this.localDB.bulkDocs(updatedTasks);
 
-    this.remoteDB.bulkDocs(updatedTasks);
+    if (this.remoteDB) {
+      this.remoteDB.bulkDocs(updatedTasks);
+    }
     await this.fetchAll();
   }
 
@@ -125,7 +129,9 @@ class TasksStorage {
     );
     const res = await this.localDB.bulkDocs(updatedTasks);
 
-    this.remoteDB.bulkDocs(updatedTasks);
+    if (this.remoteDB) {
+      this.remoteDB.bulkDocs(updatedTasks);
+    }
     await this.fetchAll();
   }
 
