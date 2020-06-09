@@ -1,46 +1,161 @@
 import PouchDB from 'pouchdb';
-import PouchMemoryAdapterPlugin from 'pouchdb-adapter-memory';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { UrlBuilder } from '../url-builder';
+import PouchDBFind from 'pouchdb-find';
+import {BehaviorSubject, Subject, Observable} from 'rxjs';
+import {UrlBuilder} from '../url-builder';
+import {Task} from '../task';
 
-PouchDB.plugin(PouchMemoryAdapterPlugin);
+PouchDB.plugin(PouchDBFind);
 
-export class TasksStorage {
-    constructor(urlBuilder) {
-        if (!urlBuilder || !(urlBuilder instanceof UrlBuilder)) {
-            throw new Error('Url builder missing or invalid!');
-        }
-        this.urlBuilder = urlBuilder;
-        this.localDatabase = null;
-        this.remoteDatabase = null;
-        this._tasks = new Subject();
+class TasksStorage {
+  constructor(localUrl, remoteUrl, localOpts, remoteOpts) {
+    if (!localUrl.trim()) {
+      throw new Error('TasksStorage initialized without local url.');
     }
+    this.localUrl = localUrl;
+    this.remoteUrl = remoteUrl;
 
-    get tasks() {
-        return this._tasks.asObservable();
+    this.localDB = new PouchDB(this.localUrl, localOpts);
+
+    /**
+     * @type {BehaviorSubject<{id, content, done, _id, _rev}[]>}
+     */
+    this._tasks$ = new BehaviorSubject(null);
+
+    if (this.remoteUrl) {
+      this.remoteDB = new PouchDB(this.remoteUrl, remoteOpts);
+
+      // PouchDB.sync(this.localDB, this.remoteDB, {live: true}).on(
+      //   'active',
+      //   () => {
+      //     this.fetchAll();
+      //   },
+      // );
     }
+  }
 
-    async connectTo(token) {
-        this.urlBuilder.setDatabaseName(`a${token}`);
+  /**
+   * @returns {Observable<{id, content, done, _id, _rev}[]>}
+   */
+  get tasks() {
+    // initial fetch. the lazy pattern ensures that this is called only once.
+    this.fetchAll();
 
-        // setup remote database
-        if (this.urlBuilder.getRemoteUrl()) {
-            this.remoteDatabase = new PouchDB(this.urlBuilder.getRemoteUrl(), {
-                adapter: 'memory'
-            });
-        }
+    // lazy getter/value pattern
+    delete this.tasks;
+    Object.defineProperty(this, 'tasks', {
+      value: this._tasks$.asObservable(),
+    });
+    return this.tasks;
+  }
 
-        // setup local database
-        this.localDatabase = new PouchDB(this.urlBuilder.getLocalUrl(), {
-            adapter: 'memory'
-        });
+  // TODO:
+  connectTo(db) {}
 
-        this._tasks.next();
+  fetchAll() {
+    return this.localDB
+      .allDocs({
+        include_docs: true,
+      })
+      .then((response) => {
+        this._tasks$.next(
+          response.rows
+            .filter((row) => !row.value.deleted)
+            .map((row) => row.doc),
+        );
+      })
+      .catch((err) => {
+        console.error('ERROR', err);
+      });
+  }
+
+  async _getById(id) {
+    return await this.localDB
+      .find({
+        selector: {
+          id,
+        },
+      })
+      .then((res) => res.docs[0]);
+  }
+
+  /**
+   * @param {Task[]} tasks
+   */
+  async save(...tasks) {
+    const jsonTasks = tasks.map((task) => task.toJSON());
+    const res = await this.localDB.bulkDocs(jsonTasks);
+
+    // no `await` so the slow change in remote will happen asynchronously!
+    this.remoteDB.bulkDocs(jsonTasks);
+    await this.fetchAll();
+  }
+
+  /**
+   * @param {Task[]} tasks
+   */
+  async update(...tasks) {
+    const updatedTasks = await Promise.all(
+      tasks.map(async (task) => {
+        const t = await this._getById(task.id);
+        return {
+          ...t,
+          ...task.toJSON(),
+        };
+      }),
+    );
+    const res = await this.localDB.bulkDocs(updatedTasks);
+
+    this.remoteDB.bulkDocs(updatedTasks);
+    await this.fetchAll();
+  }
+
+  /**
+   * @param {Task[]} tasks
+   */
+  async delete(...tasks) {
+    const updatedTasks = await Promise.all(
+      tasks.map(async (task) => {
+        const t = await this._getById(task.id);
+        return {
+          ...t,
+          ...task.toJSON(),
+          _deleted: true,
+        };
+      }),
+    );
+    const res = await this.localDB.bulkDocs(updatedTasks);
+
+    this.remoteDB.bulkDocs(updatedTasks);
+    await this.fetchAll();
+  }
+
+  async clearStorage() {
+    const {rows} = await this.localDB.allDocs();
+    let remoteDocs = null;
+    if (this.remoteDB) {
+      remoteDocs = await this.remoteDB.allDocs();
     }
+    await Promise.all(
+      rows.map(async (row) => {
+        await this.localDB.remove(row.id, row.value.rev);
+      }),
+      remoteDocs
+        ? remoteDocs.rows.map(async (row) => {
+            await this.remoteDB.remove(row.id, row.value.rev);
+          })
+        : Promise.resolve(),
+    );
 
-    save(...tasks) {}
+    await this.fetchAll();
+  }
 
-    update(...tasks) {}
+  closeConnection() {
+    this.localDB.close();
 
-    delete(...tasks) {}
+    if (this.remoteDB) {
+      this.remoteDB.close();
+    }
+  }
 }
+
+export {TasksStorage};

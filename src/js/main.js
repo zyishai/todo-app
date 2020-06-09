@@ -1,9 +1,19 @@
 import {Router} from './dom/router';
+import DomAdapter from './dom/adapter';
+import {State} from './state';
+import {UserManager} from './user-manager';
+import {Task} from './task';
+
 export class Main {
   static init(...dependencies) {
     return new Main(...dependencies);
   }
 
+  /**
+   * @param {DomAdapter} domAdapter
+   * @param {State} state
+   * @param {UserManager} userManager
+   */
   constructor(domAdapter, state, userManager) {
     this.domAdapter = domAdapter;
     this.state = state;
@@ -45,8 +55,12 @@ export class Main {
       this._clearFinishedTasksRequestHandler.bind(this),
     );
 
-    this.state.onTasksSyncEvent(this.updateView.bind(this));
-    this.state.syncStorageFrom(token);
+    this.state.tasks.subscribe((data) => {
+      if (data) {
+        this.updateView(data.map(Task.from));
+      }
+    });
+    // this.state.syncStorageFrom(token);
   }
 
   _addNewTaskRequestHandler(newTask) {
@@ -89,8 +103,8 @@ export class Main {
     this.state.deleteTask(task.id);
   }
 
-  updateView() {
-    this.domAdapter.renderTasksList(this.state.tasks, {
+  updateView(tasks) {
+    this.domAdapter.renderTasksList(tasks, {
       taskStatusChangeRquestHandler: this._toggleTaskState.bind(this),
       taskContentEndEditRequestHandler: this._updateTaskContent.bind(this),
       deleteTaskRequestHandler: this._deleteTask.bind(this),

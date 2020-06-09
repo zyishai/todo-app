@@ -1,1 +1,1 @@
-export class Storage {}
+export {TasksStorage} from './tasks';
