@@ -12,6 +12,7 @@ import {TaskList} from './task-list';
 import {IntroPage} from './intro-page';
 import {TasksPage} from './tasks-page';
 import {UserLoginModal} from './user-login-modal';
+import {CategoryList} from './category-list';
 
 class Adapter {
   /** ===PUBLIC API=== */
@@ -38,6 +39,14 @@ class Adapter {
   }
   static getTaskInputValue() {
     return TaskEditModal.getValue();
+  }
+  static renderCategoriesList(categories, userDefinedHandlers = {}) {
+    const defaultHandlers = {};
+    const handlers = {
+      ...defaultHandlers,
+      ...userDefinedHandlers,
+    };
+    return CategoryList.renderList(categories, handlers);
   }
   static renderTasksList(tasks, userDefinedHandlers = {}) {
     const defaultHandlers = {

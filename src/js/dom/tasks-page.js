@@ -23,7 +23,7 @@ export class TasksPage {
           </div>
           <main id="task-list">
             <header>
-              <h1>Default</h1>
+              <h1></h1>
               <button
                 class="btn btn-primary icon-btn"
                 @click=${() => TaskForm.openForm()}

@@ -1,3 +1,4 @@
+import {combineLatest} from 'rxjs';
 import {Router} from './dom/router';
 import DomAdapter from './dom/adapter';
 import {State} from './state';
@@ -56,10 +57,20 @@ export class Main {
       this._clearFinishedTasksRequestHandler.bind(this),
     );
 
-    this.state.tasks.subscribe((data) => {
-      if (data) {
-        this.updateView(data.map(Task.from));
-      }
+    // FIXME: combine tasks and categories observables
+    // and pass the combined data to `updateView`.
+    combineLatest(
+      this.state.tasks,
+      this.state.categories,
+      this.state.selectedCategory,
+    ).subscribe(([tasks, categories, selectedCategory]) => {
+      const taskObjs = tasks.map(Task.from);
+      const categoryObjs = Array.from(categories, (category) => ({
+        name: category,
+        displayName: category,
+        selected: category === selectedCategory ? true : false,
+      }));
+      this.updateView(taskObjs, categoryObjs);
     });
   }
 
@@ -103,11 +114,12 @@ export class Main {
     this.state.deleteTask(task.id);
   }
 
-  updateView(tasks) {
+  updateView(tasks, categories) {
     this.domAdapter.renderTasksList(tasks, {
       taskStatusChangeRquestHandler: this._toggleTaskState.bind(this),
       taskContentEndEditRequestHandler: this._updateTaskContent.bind(this),
       deleteTaskRequestHandler: this._deleteTask.bind(this),
     });
+    this.domAdapter.renderCategoriesList(categories, {});
   }
 }
