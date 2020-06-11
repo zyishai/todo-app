@@ -1,0 +1,99 @@
+#task-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  max-width: 700px;
+  height: 100%;
+  padding: 30px;
+  padding-left: 50px;
+  overflow: hidden;
+}
+
+#task-list header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 2.5rem;
+  margin-bottom: 30px;
+}
+
+#task-list header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  color: var(--text-dark);
+  padding-left: 35px;
+}
+
+#task-list section {
+  flex: 1;
+  overflow-y: auto;
+}
+
+#task-list section ul {
+  display: grid;
+  grid-auto-flow: row;
+  row-gap: 25px;
+  height: auto;
+}
+
+#task-list section ul:empty::after {
+  content: "You don't have any tasks in this category yet..";
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  letter-spacing: 0;
+  padding-left: 35px;
+}
+
+#task-list section ul li {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 25px 1fr;
+  grid-template-rows: 25px;
+  align-items: center;
+  column-gap: 10px;
+}
+
+#task-list section ul li > input[type='checkbox'] {
+  position: absolute;
+  visibility: hidden;
+}
+
+#task-list section ul li .done {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--auxilary);
+  background-image: url(../img/tick.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 0%;
+  transition: background-size 0.2s;
+}
+
+#task-list section ul li > input[type='checkbox']:checked + .done {
+  background-size: 50%;
+}
+
+#task-list section ul li > .text {
+  font-size: 1.2rem;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  line-height: 1.2rem;
+  color: var(--text-dark);
+  transition: 0.2s;
+}
+
+#task-list section ul li > input[type='checkbox']:checked ~ .text {
+  color: var(--text-light);
+}
+
+#task-list section footer {
+  margin-top: 20px;
+}
+
+#task-list section ul:empty ~ footer {
+  display: none;
+}

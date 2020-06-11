@@ -1,1 +1,4 @@
-{}
+{
+  "NODE_ENV": "test",
+  "baseUrl": "http://localhost:1234"
+}

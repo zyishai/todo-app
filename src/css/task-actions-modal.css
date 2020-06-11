@@ -1,0 +1,34 @@
+.task-actions-modal header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.task-actions-modal section {
+    display: grid;
+    grid-auto-flow: row;
+    justify-items: center;
+    row-gap: 10px;
+    padding: 0 30px;
+}
+
+.task-actions-modal footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.task-actions-modal footer .link-btn .text {
+    color: var(--text-light);
+    font-weight: 400;
+    line-height: 1em;
+}
+
+.task-actions-modal footer .link-btn .icon img {
+    height: 1em;
+    box-sizing: content-box;
+}

@@ -1,0 +1,19 @@
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50%;
+    max-width: 700px;
+    min-height: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    padding: 30px 50px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
+    z-index: 10;
+    transition: .5s;
+}
+
+.modal.active {
+    transform: translate(-50%, -50%) scale(1);
+}

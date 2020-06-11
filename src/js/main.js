@@ -1,107 +1,144 @@
-import { AppState } from './state';
-import { LocalStorageWrapper } from './storage';
+import {combineLatest} from 'rxjs';
+import {Router} from './dom/router';
+import DomAdapter from './dom/adapter';
+import {State} from './state';
+import {UserManager} from './user-manager';
+import {Task} from './task';
 
 export class Main {
-    static init() {
-        return new Main();
+  static init(...dependencies) {
+    return new Main(...dependencies);
+  }
+
+  /**
+   * @param {DomAdapter} domAdapter
+   * @param {State} state
+   * @param {UserManager} userManager
+   */
+  constructor(domAdapter, state, userManager) {
+    this.domAdapter = domAdapter;
+    this.state = state;
+    this.userManager = userManager;
+    this.router = new Router([
+      {
+        path: '/',
+        template: () => this._outletPageRoute(),
+      },
+      {
+        path: '/intro',
+        template: () => this._introPathRoute(),
+      },
+      {
+        path: '/home',
+        template: ({token}) => this._homePathRoute(token),
+      },
+    ]);
+    this.initializeAdapter();
+    this.router.loadRoute(''); // explicit initial loading!
+  }
+
+  initializeAdapter() {
+    this.domAdapter.initGlobal();
+    // `login` button press
+    this.domAdapter.onLoginRequest(this._loginRequestHandler.bind(this));
+  }
+
+  _homePathRoute(token) {
+    this.state.syncStorageFrom(token);
+    this.domAdapter.renderTasksPage();
+
+    // `new task` form submission -> add new task
+    this.domAdapter.onAddNewTaskRequest(
+      this._addNewTaskRequestHandler.bind(this),
+    );
+
+    // `clear all finished tasks` button press
+    this.domAdapter.onClearFinishedTasksRequest(
+      this._clearFinishedTasksRequestHandler.bind(this),
+    );
+
+    combineLatest(
+      this.state.tasks,
+      this.state.categories,
+      this.state.selectedCategory,
+    ).subscribe(([tasks, categories, selectedCategory]) => {
+      const taskObjs = tasks.map(Task.from);
+      const categoryObjs = Array.from(categories, (category) => ({
+        name: category,
+        displayName: category,
+        selected: category === selectedCategory ? true : false,
+      })).sort((a, b) => {
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
+        return 0;
+      });
+      this.domAdapter.setFormCategoriesChoices(categoryObjs);
+      this.updateView(taskObjs, categoryObjs);
+    });
+  }
+
+  _addNewTaskRequestHandler(newTaskTitle, newTaskCategory) {
+    this.state.addNewTask(newTaskTitle, newTaskCategory);
+  }
+
+  _clearFinishedTasksRequestHandler() {
+    this.state.clearAllFinishedTasks();
+  }
+
+  async _loginRequestHandler(loginData) {
+    const userToken = this.userManager.login(loginData);
+    this.router.loadRoute('home', {token: userToken});
+  }
+
+  _outletPageRoute() {
+    const savedToken = this.userManager.getUserToken();
+
+    if (savedToken) {
+      this.router.loadRoute('home', {token: savedToken});
+    } else {
+      this.router.loadRoute('intro');
     }
+  }
+  _introPathRoute() {
+    this.domAdapter.renderIntroPage();
+  }
 
-    constructor() {
-        // DOM elements
-        this.newTaskInput = document.querySelector('.input input');
-        this.createNewTaskButton = document.querySelector('form .btn[type="submit"]');
-        this.tasksList = document.querySelector('.tasks ul');
-        this.createNewTaskForm = document.querySelector('.container form');
-        this.deleteAllFinishedTasksButton = document.querySelector('.tasks .clear');
+  _toggleTaskState(task) {
+    this.domAdapter.activateTaskDisplayMode();
+    this.state.toggleTaskState(task.id);
+  }
 
-        this.state = new AppState(this, new LocalStorageWrapper());
-        this.state.tasks.forEach(this.displayTask.bind(this));
-        
-        // register event listeners
-        this.createNewTaskForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.state.addNewTask(this.newTaskInput.value);
-            this.newTaskInput.value = '';
-        });
-        this.deleteAllFinishedTasksButton.addEventListener('click', () => {
-            this.state.clearAllFinishedTasks();
-        });
-    }
+  _updateTask(task) {
+    this.domAdapter.activateTaskDisplayMode();
+    this.state.updateTask(
+      Task.from({
+        ...task.toJSON(),
+        ...this.domAdapter.getTaskInputValues(),
+      }),
+    );
+  }
 
-    displayTask(task) {
-        const taskItem = document.createElement('li');
-        const taskStatusLabel = document.createElement('label');
-        taskStatusLabel.className = 'done';
-        taskStatusLabel.htmlFor = task.id;
-        taskStatusLabel.addEventListener('click', (e) => {
-            e.preventDefault();
-            this.displayMode(task.id);
-            this.state.toggleTaskState(task.id);
-        });
-        const taskStatusCheckbox = document.createElement('input');
-        taskStatusCheckbox.type = 'checkbox';
-        taskStatusCheckbox.id = task.id;
-        taskStatusCheckbox.checked = task.done;
-        const taskTextContainer = document.createElement('span');
-        taskTextContainer.className = 'text';
-        const taskTextContent = document.createElement('span');
-        taskTextContent.className = 'content';
-        taskTextContent.textContent = task.content;
-        taskTextContent.addEventListener('dblclick', () => {
-            this.editMode(task.id);
-        });
-        const taskTextDeleteSign = document.createElement('span');
-        taskTextDeleteSign.className = 'delete';
-        taskTextDeleteSign.innerHTML = '&#128465;';
-        taskTextDeleteSign.addEventListener('click', () => {
-            this.state.deleteTask(task.id);
-        });
-        const taskTextInput = document.createElement('input');
-        taskTextInput.type = 'text';
-        taskTextInput.addEventListener('dblclick', () => {
-            this.displayMode(task.id);
-            this.state.updateTaskContent(task.id, taskTextInput.value);
-        });
+  _deleteTask(task) {
+    this.state.deleteTask(task.id);
+  }
 
-        taskTextContainer.append(
-            taskTextContent,
-            taskTextDeleteSign,
-            taskTextInput
-        );
-        taskItem.append(
-            taskStatusCheckbox,
-            taskStatusLabel,
-            taskTextContainer
-        );
-        this.tasksList.appendChild(taskItem);
-    }
+  _selectCategory(categoryName) {
+    this.state.selectCategory(categoryName);
+  }
 
-    // INSTEAD OF THIS...
-    updateTask(task) {
-        const taskItemCheckbox = document.querySelector(`#${task.id}`);
-        taskItemCheckbox.checked = task.done;
-        document.querySelector(`#${task.id} ~ .text .content`).textContent = task.content;
-    }
+  _deleteCategory(categoryName) {
+    this.state.deleteCategory(categoryName);
+  }
 
-    removeTask(taskId) {
-        document.querySelector(`#${taskId}`).parentNode.remove();
-    }
-
-    // ...DO THIS
-    updateView() {
-        this.tasksList.innerHTML = '';
-        this.state.tasks.forEach(this.displayTask.bind(this));
-    }
-
-    editMode(taskId) {
-        const task = this.state.getById(taskId);
-        const taskTextInput = document.querySelector(`#${taskId} ~ .text input`);
-        taskTextInput.classList.add('active');
-        taskTextInput.value = task.content;
-    }
-
-    displayMode(taskId) {
-        const taskTextInput = document.querySelector(`#${taskId} ~ .text input`);
-        taskTextInput.classList.remove('active');
-    }
+  updateView(tasks, categories) {
+    this.domAdapter.renderTasksList(tasks, {
+      taskStatusChangeRquestHandler: this._toggleTaskState.bind(this),
+      taskContentEndEditRequestHandler: this._updateTask.bind(this),
+      deleteTaskRequestHandler: this._deleteTask.bind(this),
+    });
+    this.domAdapter.renderCategoriesList(categories, {
+      categorySelectedHandler: this._selectCategory.bind(this),
+      categoryDeleteRequestHandler: this._deleteCategory.bind(this),
+    });
+  }
 }

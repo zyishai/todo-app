@@ -1,0 +1,43 @@
+.task-edit-modal header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.task-edit-modal main {
+  display: grid;
+  grid-auto-flow: row;
+  row-gap: 10px;
+  margin-bottom: 20px;
+}
+
+.task-edit-modal main textarea {
+  min-height: 100px !important;
+  max-height: 300px;
+  width: 100%;
+  padding: 15px;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.4rem;
+  letter-spacing: 0.3px;
+  resize: vertical;
+  border: none;
+  outline: none;
+  background-color: var(--auxilary);
+  border-radius: 8px;
+}
+
+.task-edit-modal main input.category {
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 10px;
+  background-color: var(--auxilary);
+  border-radius: 8px;
+}
+
+.task-edit-modal footer {
+  display: grid;
+  grid-auto-flow: column;
+  column-gap: 10px;
+  justify-content: end;
+}

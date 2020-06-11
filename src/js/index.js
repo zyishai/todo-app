@@ -1,5 +1,20 @@
-import { Main } from './main';
+import {Main} from './main';
+import litHtmlAdapter from './dom/adapter';
+import {Storage as AppStorage} from './storage';
+import {State} from './state';
+import {UserManager} from './user-manager';
+import {UrlBuilder} from './url-builder';
 
-;(function() {
-    Main.init();
-})()
+(function () {
+  const localUrlBuilder = new UrlBuilder().setDatabaseName(
+    process.env.STORAGE_DB_NAME,
+  );
+  const remoteUrlBuilder = new UrlBuilder()
+    .setHostName(process.env.REMOTE_STORAGE_URL_HOST)
+    .setUser(process.env.REMOTE_STORAGE_USERNAME)
+    .setPassword(process.env.REMOTE_STORAGE_PASSWORD)
+    .setDatabaseName(process.env.STORAGE_DB_NAME);
+  const state = new State(new AppStorage(localUrlBuilder, remoteUrlBuilder));
+  const userManager = new UserManager(localStorage);
+  Main.init(litHtmlAdapter, state, userManager);
+})();
