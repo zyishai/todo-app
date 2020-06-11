@@ -7,22 +7,25 @@ import {Task} from '../task';
 PouchDB.plugin(PouchDBFind);
 
 class TasksStorage {
-  constructor(localUrl, remoteUrl, localOpts, remoteOpts) {
-    if (!localUrl.trim()) {
-      throw new Error('TasksStorage initialized without local url.');
-    }
-    this.localUrl = localUrl;
-    this.remoteUrl = remoteUrl;
+  /**
+   * @param {UrlBuilder} localUrlBuilder
+   * @param {UrlBuilder} remoteUrlBuilder
+   */
+  constructor(localUrlBuilder, remoteUrlBuilder, localOpts, remoteOpts) {
+    this.localUrlBuilder = localUrlBuilder;
+    this.remoteUrlBuilder = remoteUrlBuilder;
+    this.localOpts = localOpts;
+    this.remoteOpts = remoteOpts;
 
-    this.localDB = new PouchDB(this.localUrl, localOpts);
+    this.localDB = new PouchDB(this.localUrlBuilder.getUrl(), localOpts);
 
     /**
      * @type {BehaviorSubject<{id, content, done, _id, _rev}[]>}
      */
     this._tasks$ = new BehaviorSubject(null);
 
-    if (this.remoteUrl) {
-      this.remoteDB = new PouchDB(this.remoteUrl, remoteOpts);
+    if (this.remoteUrlBuilder) {
+      this.remoteDB = new PouchDB(this.remoteUrlBuilder.getUrl(), remoteOpts);
 
       // PouchDB.sync(this.localDB, this.remoteDB, {live: true}).on(
       //   'active',
@@ -48,8 +51,23 @@ class TasksStorage {
     return this.tasks;
   }
 
-  // TODO:
-  connectTo(db) {}
+  // TODO: reconnect databases to these two urls.
+  async connectTo(token) {
+    await this.localDB.close();
+    this.localUrlBuilder.setDatabaseName(`a${token}`);
+    this.localDB = new PouchDB(this.localUrlBuilder.getUrl(), this.localOpts);
+
+    if (this.remoteUrlBuilder) {
+      await this.remoteDB.close();
+      this.remoteUrlBuilder.setDatabaseName(`a${token}`);
+      this.remoteDB = new PouchDB(
+        this.remoteUrlBuilder.getUrl(),
+        this.remoteOpts,
+      );
+    }
+
+    await this.fetchAll();
+  }
 
   fetchAll() {
     return this.localDB

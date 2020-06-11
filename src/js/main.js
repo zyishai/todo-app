@@ -43,6 +43,7 @@ export class Main {
   }
 
   _homePathRoute(token) {
+    this.state.syncStorageFrom(token);
     this.domAdapter.renderTasksPage();
 
     // `new task` form submission -> add new task
@@ -60,7 +61,6 @@ export class Main {
         this.updateView(data.map(Task.from));
       }
     });
-    // this.state.syncStorageFrom(token);
   }
 
   _addNewTaskRequestHandler(newTask) {
