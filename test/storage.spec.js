@@ -16,7 +16,7 @@ suite('Tasks Storage', () => {
     await storage.clearStorage();
   });
 
-  test('upon initialization a storage should pass tasks data to tasks observable', (done) => {
+  test('upon subscribing a storage should pass tasks data to tasks observable', (done) => {
     let times = 0;
     storage.tasks.subscribe(function (res) {
       if (res && times === 0) {
@@ -74,6 +74,57 @@ suite('Tasks Storage', () => {
     await storage.clearStorage();
 
     expect(storage._tasks$.value).to.be.empty;
+  });
+
+  teardown(async function () {
+    await storage.localDB.destroy();
+
+    if (storage.remoteDB) {
+      await storage.remoteDB.destroy();
+    }
+  });
+});
+
+suite('Categories Storage', () => {
+  setup(async function () {
+    const builder = new UrlBuilder().setDatabaseName('__mocha__');
+    storage = new AppStorage(builder);
+    await storage.clearStorage();
+  });
+
+  test('upon subscribing a storage should pass categories data to categories observable', async () => {
+    await storage.save(new Task('unit test'));
+
+    storage.categories.subscribe((categories) => {
+      expect(categories).to.be.a('set');
+    });
+  });
+
+  test('categories without category field should map to Default category', async () => {
+    await storage.save(new Task('unit test'));
+
+    storage.categories.subscribe((categories) => {
+      expect(categories).to.have.lengthOf(1);
+      expect(categories.has('Default')).to.be.true;
+    });
+  });
+
+  test('each distinct category should appear only once', async () => {
+    const defaultTask = new Task();
+    const specialTaskOne = new Task();
+    specialTaskOne.setCategory('special');
+    const specialTaskTwo = new Task();
+    specialTaskTwo.setCategory('special');
+
+    await storage.save(defaultTask);
+    await storage.save(specialTaskOne);
+    await storage.save(specialTaskTwo);
+
+    storage.categories.subscribe((categories) => {
+      expect(categories).to.have.lengthOf(2);
+      expect(categories.has('Default')).to.be.true;
+      expect(categories.has('special')).to.be.true;
+    });
   });
 
   teardown(async function () {
