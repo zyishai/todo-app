@@ -1,18 +1,50 @@
+import {Router} from './dom/router';
+import DomAdapter from './dom/adapter';
+import {State} from './state';
+import {UserManager} from './user-manager';
+import {Task} from './task';
+
 export class Main {
-  static init(domAdapter, state, userManager) {
-    return new Main(domAdapter, state, userManager);
+  static init(...dependencies) {
+    return new Main(...dependencies);
   }
 
+  /**
+   * @param {DomAdapter} domAdapter
+   * @param {State} state
+   * @param {UserManager} userManager
+   */
   constructor(domAdapter, state, userManager) {
     this.domAdapter = domAdapter;
     this.state = state;
     this.userManager = userManager;
-
-    this.registerGlobalListeners();
+    this.router = new Router([
+      {
+        path: '/',
+        template: () => this._outletPageRoute(),
+      },
+      {
+        path: '/intro',
+        template: () => this._introPathRoute(),
+      },
+      {
+        path: '/home',
+        template: ({token}) => this._homePathRoute(token),
+      },
+    ]);
+    this.initializeAdapter();
+    this.router.loadRoute(''); // explicit initial loading!
   }
 
-  _performLogin(token) {
-    this.domAdapter.initializeTasksPage();
+  initializeAdapter() {
+    this.domAdapter.initGlobal();
+    // `login` button press
+    this.domAdapter.onLoginRequest(this._loginRequestHandler.bind(this));
+  }
+
+  _homePathRoute(token) {
+    this.state.syncStorageFrom(token);
+    this.domAdapter.renderTasksPage();
 
     // `new task` form submission -> add new task
     this.domAdapter.onAddNewTaskRequest(
@@ -24,8 +56,11 @@ export class Main {
       this._clearFinishedTasksRequestHandler.bind(this),
     );
 
-    this.state.onTasksSyncEvent(this.updateView.bind(this));
-    this.state.syncStorageFrom(token);
+    this.state.tasks.subscribe((data) => {
+      if (data) {
+        this.updateView(data.map(Task.from));
+      }
+    });
   }
 
   _addNewTaskRequestHandler(newTask) {
@@ -38,23 +73,20 @@ export class Main {
 
   async _loginRequestHandler(loginData) {
     const userToken = this.userManager.login(loginData);
-    this._performLogin(userToken);
+    this.router.loadRoute('home', {token: userToken});
   }
 
-  registerGlobalListeners() {
-    // We need to keep this event if we perform login,
-    // because we let the user re-login, and the intro page
-    // initialize the login modal... need redesign!
-    this.domAdapter.initializeIntroPage();
-
-    // `login` button press
-    this.domAdapter.onLoginRequest(this._loginRequestHandler.bind(this));
-
+  _outletPageRoute() {
     const savedToken = this.userManager.getUserToken();
 
     if (savedToken) {
-      this._performLogin(savedToken);
+      this.router.loadRoute('home', {token: savedToken});
+    } else {
+      this.router.loadRoute('intro');
     }
+  }
+  _introPathRoute() {
+    this.domAdapter.renderIntroPage();
   }
 
   _toggleTaskState(task) {
@@ -71,8 +103,8 @@ export class Main {
     this.state.deleteTask(task.id);
   }
 
-  updateView() {
-    this.domAdapter.renderTasksList(this.state.tasks, {
+  updateView(tasks) {
+    this.domAdapter.renderTasksList(tasks, {
       taskStatusChangeRquestHandler: this._toggleTaskState.bind(this),
       taskContentEndEditRequestHandler: this._updateTaskContent.bind(this),
       deleteTaskRequestHandler: this._deleteTask.bind(this),

@@ -29,6 +29,7 @@ describe('Deleting tasks', () => {
     cy.contains('Second task');
 
     cy.queryTasks().withContent('Second task').toggleState();
+    cy.wait(200);
     cy.get('#task-list section footer').contains('button', 'Remove').click();
 
     cy.contains('First task');
