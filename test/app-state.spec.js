@@ -84,6 +84,28 @@ suite('State', () => {
     expect(tasksObservableSpy.getCall(5).lastArg).to.deep.equal([]);
   });
 
+  test('creating task with new category should emit the new category in the categories observable', async () => {
+    const task = await state.addNewTask('unit test', 'special');
+    expect(task.category).to.equal('special');
+
+    state.categories.subscribe((categories) => {
+      expect(categories.has('special')).to.be.true;
+    });
+  });
+
+  test('calling selectCategory should emit selectedCategory and tasks observables', async () => {
+    await state.addNewTask('unit test', 'special');
+    state.selectCategory('special');
+
+    state.selectedCategory.subscribe((selectedCategory) => {
+      expect(selectedCategory).to.equal('special');
+    });
+    state.tasks.subscribe((tasks) => {
+      expect(tasks.map((t) => t.category)).to.include('special');
+      expect(tasks.map((t) => t.category)).to.not.include('Default');
+    });
+  });
+
   test('call to clearAllFinishedTasks should reflected in storage', async () => {
     const tasksObservableSpy = sinon.fake();
     state.tasks.subscribe(tasksObservableSpy);
