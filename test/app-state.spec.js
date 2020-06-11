@@ -35,12 +35,27 @@ suite('State', () => {
     expect(storage.connectTo).to.have.been.calledWith('foo');
   });
 
-  test('upon initialization should emit tasks', async () => {
+  test('upon subscription should emit tasks', async () => {
     const tasksObservableSpy = sinon.fake();
 
-    state.tasks.subscribe(tasksObservableSpy);
+    state.tasks.subscribe(tasksObservableSpy, null, null);
 
     expect(tasksObservableSpy).to.be.calledWithMatch([]);
+  });
+
+  test('upon subscription should emit categories', async () => {
+    const categoriesObservableSpy = sinon.fake();
+    await state.addNewTask('unit test');
+
+    state.categories.subscribe(categoriesObservableSpy, null, null);
+
+    expect(categoriesObservableSpy).to.be.calledWithMatch(new Set(['Default']));
+  });
+
+  test('upon subscription should emit selected category', () => {
+    state.selectedCategory.subscribe((selectedCategory) => {
+      expect(selectedCategory).to.match(/Default/i);
+    });
   });
 
   test('CRUD operations on tasks should be reflected in storage', async () => {
