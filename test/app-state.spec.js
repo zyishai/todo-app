@@ -6,6 +6,7 @@ import {Storage as AppStorage} from '../src/js/storage';
 import {State} from '../src/js/state';
 import {Task} from '../src/js/task';
 import {UrlBuilder} from '../src/js/url-builder';
+import {take} from 'rxjs/operators';
 
 suite('State', () => {
   PouchDB.plugin(PouchMemoryAdapter);
@@ -123,19 +124,23 @@ suite('State', () => {
 
   test('calling deleteCategory should move all its tasks to default and remove the category', async () => {
     await state.addNewTask('unit test', 'special');
-    state.categories.subscribe((categories) => {
+    state.categories.pipe(take(1)).subscribe((categories) => {
       expect(categories).to.deep.include('special');
     });
-    state.tasks.subscribe((tasks) => {
+    state.tasks.pipe(take(1)).subscribe((tasks) => {
       expect(tasks.map((t) => t.content)).to.not.deep.include('unit test');
     });
 
     await state.deleteCategory('special');
-    state.categories.subscribe((categories) => {
+    state.categories.pipe(take(1)).subscribe((categories) => {
       expect(categories.has('special')).to.be.false;
     });
-    // FIXME: actually works! check why the tests doesn't pass...
-    // also, add check that all tasks move to Default category.
+    state.tasks.pipe(take(1)).subscribe((tasks) => {
+      expect(tasks.map((t) => [t.content, t.category])).to.deep.include([
+        'unit test',
+        'Default',
+      ]);
+    });
   });
 
   test('call to clearAllFinishedTasks should reflected in storage', async () => {
