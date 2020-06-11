@@ -23,7 +23,8 @@ export class State {
       map((tasks) =>
         tasks.filter(
           (task) =>
-            task.category === this._selectedCategory$.value ||
+            (!task.content.startsWith('__') &&
+              task.category === this._selectedCategory$.value) ||
             (!task.category && this._selectedCategory$.value === 'Default'),
         ),
       ),
