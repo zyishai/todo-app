@@ -108,9 +108,14 @@ export class Main {
     this.state.toggleTaskState(task.id);
   }
 
-  _updateTaskContent(task) {
+  _updateTask(task) {
     this.domAdapter.activateTaskDisplayMode();
-    this.state.updateTaskContent(task.id, this.domAdapter.getTaskInputValue());
+    this.state.updateTask(
+      Task.from({
+        ...task.toJSON(),
+        ...this.domAdapter.getTaskInputValues(),
+      }),
+    );
   }
 
   _deleteTask(task) {
@@ -128,7 +133,7 @@ export class Main {
   updateView(tasks, categories) {
     this.domAdapter.renderTasksList(tasks, {
       taskStatusChangeRquestHandler: this._toggleTaskState.bind(this),
-      taskContentEndEditRequestHandler: this._updateTaskContent.bind(this),
+      taskContentEndEditRequestHandler: this._updateTask.bind(this),
       deleteTaskRequestHandler: this._deleteTask.bind(this),
     });
     this.domAdapter.renderCategoriesList(categories, {

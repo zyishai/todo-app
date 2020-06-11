@@ -115,6 +115,13 @@ export class State {
     await this.storage.update(task);
   }
 
+  /**
+   * @param {Task} task
+   */
+  async updateTask(task) {
+    await this.storage.update(task);
+  }
+
   async deleteTask(id) {
     const task = Task.from(await this.storage._getById(id));
 

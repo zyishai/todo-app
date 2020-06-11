@@ -30,6 +30,7 @@ class Adapter {
   }
   static setFormCategoriesChoices(choices) {
     TaskForm.setFormCategoriesChoices(choices);
+    TaskEditModal.setFormCategoriesChoices(choices);
   }
   static onClearFinishedTasksRequest(clearFinishedTasksRequestHandler) {
     TaskList.getClearFinishedTasksButton().addEventListener('click', (e) => {
@@ -40,8 +41,8 @@ class Adapter {
   static onLoginRequest(loginRequestHandler) {
     UserLoginModal.onLogin(loginRequestHandler);
   }
-  static getTaskInputValue() {
-    return TaskEditModal.getValue();
+  static getTaskInputValues() {
+    return TaskEditModal.getValues();
   }
   static renderCategoriesList(categories, userDefinedHandlers = {}) {
     const defaultHandlers = {
