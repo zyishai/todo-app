@@ -121,6 +121,10 @@ export class Main {
     this.state.selectCategory(categoryName);
   }
 
+  _deleteCategory(categoryName) {
+    this.state.deleteCategory(categoryName);
+  }
+
   updateView(tasks, categories) {
     this.domAdapter.renderTasksList(tasks, {
       taskStatusChangeRquestHandler: this._toggleTaskState.bind(this),
@@ -129,6 +133,7 @@ export class Main {
     });
     this.domAdapter.renderCategoriesList(categories, {
       categorySelectedHandler: this._selectCategory.bind(this),
+      categoryDeleteRequestHandler: this._deleteCategory.bind(this),
     });
   }
 }

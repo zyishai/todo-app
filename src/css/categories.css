@@ -41,17 +41,35 @@
   overflow-y: auto;
 }
 
-#categories nav ul li {
+#categories nav ul .item {
+  display: flex;
+  align-items: center;
+}
+
+#categories nav ul .item .delete {
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  width: 1.5rem;
+  margin-right: 5px;
+}
+
+#categories nav ul .item .delete.placeholder {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#categories nav ul .item li {
+  flex: 1;
   list-style: none;
   border-radius: 8px;
   transition: 0.2s;
 }
 
-#categories nav ul li:hover {
+#categories nav ul .item li:hover {
   background-color: var(--gray-light);
 }
 
-#categories nav ul li a {
+#categories nav ul .item li a {
   display: inline-block;
   width: 100%;
   height: 100%;
@@ -63,11 +81,11 @@
   transition: 0.2s;
 }
 
-#categories nav ul li.active {
+#categories nav ul .item li.active {
   background-color: var(--brand-light);
 }
 
-#categories nav ul li.active a {
+#categories nav ul .item li.active a {
   color: var(--brand);
   font-weight: 600;
 }

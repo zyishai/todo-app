@@ -46,6 +46,7 @@ class Adapter {
   static renderCategoriesList(categories, userDefinedHandlers = {}) {
     const defaultHandlers = {
       categorySelectedHandler: () => {},
+      categoryDeleteRequestHandler: () => {},
     };
     const handlers = {
       ...defaultHandlers,

@@ -43,6 +43,7 @@ export class TaskForm {
   }
   static clearForm() {
     this._getNewTaskInput().value = '';
+    this._getCategoryInput().value = '';
   }
   static openForm() {
     render(
