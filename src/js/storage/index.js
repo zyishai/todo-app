@@ -45,7 +45,7 @@ class Storage {
   }
 
   /**
-   * @returns {Observable<{id, content, done, _id, _rev}[]>}
+   * @returns {Observable<{id, content, done, category, _id, _rev}[]>}
    */
   get tasks() {
     // initial fetch. the lazy pattern ensures that this is called only once.

@@ -1,13 +1,15 @@
-import {take} from 'rxjs/operators';
-import {TasksStorage} from '../storage';
+import {map} from 'rxjs/operators';
+import {Storage as AppStorage} from '../storage';
 import {Task} from '../task';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 export class State {
   /**
-   * @param {TasksStorage} storage
+   * @param {AppStorage} storage
    */
   constructor(storage) {
     this.storage = storage;
+    this._selectedCategory$ = new BehaviorSubject('Default');
   }
 
   async syncStorageFrom(token) {
@@ -15,9 +17,34 @@ export class State {
   }
 
   get tasks() {
-    return this.storage.tasks;
+    return this.storage.tasks.pipe(
+      map((tasks) => (tasks ? tasks : [])),
+      map((tasks) =>
+        tasks.filter(
+          (task) =>
+            task.category === this._selectedCategory$.value ||
+            (!task.category && this._selectedCategory$.value === 'Default'),
+        ),
+      ),
+    );
   }
 
+  get categories() {
+    return this.storage.categories;
+  }
+
+  /**
+   * @type {Observable<string>}
+   */
+  get selectedCategory() {
+    delete this.selectedCategory;
+    Object.defineProperty(this, 'selectedCategory', {
+      value: this._selectedCategory$.asObservable(),
+    });
+    return this.selectedCategory;
+  }
+
+  // FIXME: add support for category
   async addNewTask(text) {
     const task = new Task(text);
     await this.storage.save(task);
