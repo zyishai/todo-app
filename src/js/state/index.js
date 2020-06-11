@@ -60,22 +60,27 @@ export class State {
 
   async deleteCategory(categoryName) {
     if (categoryName !== 'Default') {
-      await this.storage._tasks$.pipe(take(1)).forEach(async (tasks) => {
-        const categoryTasks = tasks
+      let categoryTasks = null;
+      let specialCategoryTask = null;
+      await this.storage._tasks$.pipe(take(1)).forEach((tasks) => {
+        categoryTasks = tasks
           .filter(
             (t) => !t.content.startsWith('__') && t.category === categoryName,
           )
           .map(Task.from);
         categoryTasks.forEach((t) => t.setCategory('Default'));
-        await this.storage.update(...categoryTasks);
-        const specialCategoryTask = Task.from(
+        specialCategoryTask = Task.from(
           tasks.find(
             (t) => t.content.startsWith('__') && t.category === categoryName,
           ),
         );
-        await this.storage.delete(specialCategoryTask);
       });
-      this._selectedCategory$.next('Default');
+      await this.storage.update(...categoryTasks);
+      await this.storage.delete(specialCategoryTask);
+
+      if (this._selectedCategory$.value === categoryName) {
+        this._selectedCategory$.next('Default');
+      }
     }
   }
 
