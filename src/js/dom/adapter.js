@@ -12,6 +12,7 @@ import {TaskList} from './task-list';
 import {IntroPage} from './intro-page';
 import {TasksPage} from './tasks-page';
 import {UserLoginModal} from './user-login-modal';
+import {CategoryList} from './category-list';
 
 class Adapter {
   /** ===PUBLIC API=== */
@@ -27,6 +28,10 @@ class Adapter {
   static onAddNewTaskRequest(newTaskRequestHandler) {
     TaskForm.onSubmit(newTaskRequestHandler);
   }
+  static setFormCategoriesChoices(choices) {
+    TaskForm.setFormCategoriesChoices(choices);
+    TaskEditModal.setFormCategoriesChoices(choices);
+  }
   static onClearFinishedTasksRequest(clearFinishedTasksRequestHandler) {
     TaskList.getClearFinishedTasksButton().addEventListener('click', (e) => {
       e.preventDefault();
@@ -36,8 +41,19 @@ class Adapter {
   static onLoginRequest(loginRequestHandler) {
     UserLoginModal.onLogin(loginRequestHandler);
   }
-  static getTaskInputValue() {
-    return TaskEditModal.getValue();
+  static getTaskInputValues() {
+    return TaskEditModal.getValues();
+  }
+  static renderCategoriesList(categories, userDefinedHandlers = {}) {
+    const defaultHandlers = {
+      categorySelectedHandler: () => {},
+      categoryDeleteRequestHandler: () => {},
+    };
+    const handlers = {
+      ...defaultHandlers,
+      ...userDefinedHandlers,
+    };
+    return CategoryList.renderList(categories, handlers);
   }
   static renderTasksList(tasks, userDefinedHandlers = {}) {
     const defaultHandlers = {

@@ -3,8 +3,10 @@ import {randomBytes} from 'crypto';
 export class Task {
   static empty = null;
 
-  static from({id, content, done}) {
-    return new Task(id, content, done);
+  static from({id, content, done, category}) {
+    const t = new Task(id, content, done);
+    t.setCategory(category || 'Default');
+    return t;
   }
 
   constructor(...args) {
@@ -26,6 +28,8 @@ export class Task {
       this.id = this._generateId(); // Task()
       this.done = false;
     }
+
+    this.category = 'Default';
   }
 
   _generateId() {
@@ -40,11 +44,16 @@ export class Task {
     this.content = text;
   }
 
+  setCategory(cat) {
+    this.category = cat;
+  }
+
   toJSON() {
     return {
       id: this.id,
       content: this.content,
       done: this.done,
+      category: this.category,
     };
   }
 }

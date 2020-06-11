@@ -1,75 +1,93 @@
 .main-page {
-    overflow: hidden;
+  overflow: hidden;
 }
 #categories {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 #categories nav {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    height: 100%;
-    width: 100%;
-    padding: 30px 30px 30px 20px;
-    border-right: 1px solid var(--auxilary);
-    overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  width: 100%;
+  padding: 30px 30px 30px 20px;
+  border-right: 1px solid var(--auxilary);
+  overflow: hidden;
 }
 
 #categories nav header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 2.5rem;
-    margin-bottom: 5px;
-    box-sizing: content-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 2.5rem;
+  margin-bottom: 5px;
+  box-sizing: content-box;
 }
 
 #categories nav header h2 {
-    font-weight: 600;
-    letter-spacing: 1px;
-    font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  font-size: 1.1rem;
 }
 
 #categories nav ul {
-    display: block;
-    margin: 10px 0;
-    overflow-y: auto;
+  display: block;
+  margin: 10px 0;
+  overflow-y: auto;
 }
 
-#categories nav ul li {
-    list-style: none;
-    padding: 10px 30px;
-    border-radius: 8px;
-    transition: .2s;
+#categories nav ul .item {
+  display: flex;
+  align-items: center;
 }
 
-#categories nav ul li:hover {
-    background-color: var(--gray-light);
+#categories nav ul .item .delete {
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  width: 1.5rem;
+  margin-right: 5px;
 }
 
-#categories nav ul li a {
-    display: inline-block;
-    width: 100%;
-    height: 100%;
-    text-decoration: none;
-    color: var(--text-base);
-    font-weight: 500;
-    font-size: 1rem;
-    transition: .2s;
+#categories nav ul .item .delete.placeholder {
+  visibility: hidden;
+  pointer-events: none;
 }
 
-#categories nav ul li.active {
-    background-color: var(--brand-light);
+#categories nav ul .item li {
+  flex: 1;
+  list-style: none;
+  border-radius: 8px;
+  transition: 0.2s;
 }
 
-#categories nav ul li.active a {
-    color: var(--brand);
-    font-weight: 600;
+#categories nav ul .item li:hover {
+  background-color: var(--gray-light);
+}
+
+#categories nav ul .item li a {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  padding: 10px 30px;
+  text-decoration: none;
+  color: var(--text-base);
+  font-weight: 500;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+#categories nav ul .item li.active {
+  background-color: var(--brand-light);
+}
+
+#categories nav ul .item li.active a {
+  color: var(--brand);
+  font-weight: 600;
 }
 
 /* #categories nav .new-category {

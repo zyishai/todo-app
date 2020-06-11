@@ -1,25 +1,101 @@
-import {take} from 'rxjs/operators';
-import {TasksStorage} from '../storage';
+import {map, take} from 'rxjs/operators';
+import {Storage as AppStorage} from '../storage';
 import {Task} from '../task';
+import {BehaviorSubject, Observable, combineLatest} from 'rxjs';
+import {startsWith} from 'pouchdb-find';
 
 export class State {
   /**
-   * @param {TasksStorage} storage
+   * @param {AppStorage} storage
    */
   constructor(storage) {
     this.storage = storage;
+    this._selectedCategory$ = new BehaviorSubject('Default');
   }
 
   async syncStorageFrom(token) {
-    this.storage.connectTo(token);
+    await this.storage.connectTo(token);
   }
 
   get tasks() {
-    return this.storage.tasks;
+    return combineLatest(this.storage.tasks, this._selectedCategory$).pipe(
+      map(([tasks, _]) => (tasks ? tasks : [])),
+      map((tasks) =>
+        tasks.filter(
+          (task) =>
+            (!task.content.startsWith('__') &&
+              task.category === this._selectedCategory$.value) ||
+            (!task.category && this._selectedCategory$.value === 'Default'),
+        ),
+      ),
+    );
   }
 
-  async addNewTask(text) {
+  get categories() {
+    return this.storage.categories;
+  }
+
+  /**
+   * @type {Observable<string>}
+   */
+  get selectedCategory() {
+    delete this.selectedCategory;
+    Object.defineProperty(this, 'selectedCategory', {
+      value: this._selectedCategory$.asObservable(),
+    });
+    return this.selectedCategory;
+  }
+
+  async createNewCategory(categoryName) {
+    const task = new Task(`__${categoryName}__`);
+    task.setCategory(categoryName);
+    await this.storage.save(task);
+
+    return task;
+  }
+
+  selectCategory(categoryName) {
+    this._selectedCategory$.next(categoryName);
+  }
+
+  async deleteCategory(categoryName) {
+    if (categoryName !== 'Default') {
+      let categoryTasks = null;
+      let specialCategoryTask = null;
+      await this.storage._tasks$.pipe(take(1)).forEach((tasks) => {
+        categoryTasks = tasks
+          .filter(
+            (t) => !t.content.startsWith('__') && t.category === categoryName,
+          )
+          .map(Task.from);
+        categoryTasks.forEach((t) => t.setCategory('Default'));
+        specialCategoryTask = Task.from(
+          tasks.find(
+            (t) => t.content.startsWith('__') && t.category === categoryName,
+          ),
+        );
+      });
+      await this.storage.update(...categoryTasks);
+      await this.storage.delete(specialCategoryTask);
+
+      if (this._selectedCategory$.value === categoryName) {
+        this._selectedCategory$.next('Default');
+      }
+    }
+  }
+
+  /**
+   * @returns {Promise<Task>}
+   */
+  async addNewTask(text, category = 'Default') {
+    await this.categories.pipe(take(1)).forEach((categories) => {
+      if (!categories.has(category)) {
+        return this.createNewCategory(category);
+      }
+    });
+
     const task = new Task(text);
+    task.setCategory(category);
     await this.storage.save(task);
 
     return task;
@@ -39,6 +115,13 @@ export class State {
     await this.storage.update(task);
   }
 
+  /**
+   * @param {Task} task
+   */
+  async updateTask(task) {
+    await this.storage.update(task);
+  }
+
   async deleteTask(id) {
     const task = Task.from(await this.storage._getById(id));
 
@@ -46,9 +129,15 @@ export class State {
   }
 
   async clearAllFinishedTasks() {
-    const tasks = this.storage._tasks$.value;
-    const finishedTasks = tasks.filter((task) => task.done).map(Task.from);
-    await this.storage.delete(...finishedTasks);
+    return new Promise((resolve) => {
+      const sub = this.tasks.subscribe((tasks) => {
+        const finishedTasks = tasks.filter((task) => task.done).map(Task.from);
+        this.storage.delete(...finishedTasks).then(() => {
+          sub.unsubscribe();
+          resolve();
+        });
+      });
+    });
   }
 
   async clearAllTasks() {

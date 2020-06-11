@@ -1,3 +1,4 @@
+import {combineLatest} from 'rxjs';
 import {Router} from './dom/router';
 import DomAdapter from './dom/adapter';
 import {State} from './state';
@@ -56,15 +57,28 @@ export class Main {
       this._clearFinishedTasksRequestHandler.bind(this),
     );
 
-    this.state.tasks.subscribe((data) => {
-      if (data) {
-        this.updateView(data.map(Task.from));
-      }
+    combineLatest(
+      this.state.tasks,
+      this.state.categories,
+      this.state.selectedCategory,
+    ).subscribe(([tasks, categories, selectedCategory]) => {
+      const taskObjs = tasks.map(Task.from);
+      const categoryObjs = Array.from(categories, (category) => ({
+        name: category,
+        displayName: category,
+        selected: category === selectedCategory ? true : false,
+      })).sort((a, b) => {
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
+        return 0;
+      });
+      this.domAdapter.setFormCategoriesChoices(categoryObjs);
+      this.updateView(taskObjs, categoryObjs);
     });
   }
 
-  _addNewTaskRequestHandler(newTask) {
-    this.state.addNewTask(newTask);
+  _addNewTaskRequestHandler(newTaskTitle, newTaskCategory) {
+    this.state.addNewTask(newTaskTitle, newTaskCategory);
   }
 
   _clearFinishedTasksRequestHandler() {
@@ -94,20 +108,37 @@ export class Main {
     this.state.toggleTaskState(task.id);
   }
 
-  _updateTaskContent(task) {
+  _updateTask(task) {
     this.domAdapter.activateTaskDisplayMode();
-    this.state.updateTaskContent(task.id, this.domAdapter.getTaskInputValue());
+    this.state.updateTask(
+      Task.from({
+        ...task.toJSON(),
+        ...this.domAdapter.getTaskInputValues(),
+      }),
+    );
   }
 
   _deleteTask(task) {
     this.state.deleteTask(task.id);
   }
 
-  updateView(tasks) {
+  _selectCategory(categoryName) {
+    this.state.selectCategory(categoryName);
+  }
+
+  _deleteCategory(categoryName) {
+    this.state.deleteCategory(categoryName);
+  }
+
+  updateView(tasks, categories) {
     this.domAdapter.renderTasksList(tasks, {
       taskStatusChangeRquestHandler: this._toggleTaskState.bind(this),
-      taskContentEndEditRequestHandler: this._updateTaskContent.bind(this),
+      taskContentEndEditRequestHandler: this._updateTask.bind(this),
       deleteTaskRequestHandler: this._deleteTask.bind(this),
+    });
+    this.domAdapter.renderCategoriesList(categories, {
+      categorySelectedHandler: this._selectCategory.bind(this),
+      categoryDeleteRequestHandler: this._deleteCategory.bind(this),
     });
   }
 }
