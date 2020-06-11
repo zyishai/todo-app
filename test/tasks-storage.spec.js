@@ -1,4 +1,5 @@
 import {expect} from 'chai';
+import {spy} from 'sinon';
 import {TasksStorage} from '../src/js/storage/tasks';
 import {UrlBuilder} from '../src/js/url-builder';
 import {Task} from '../src/js/task';
@@ -11,7 +12,7 @@ let storage = null;
 suite('Tasks Storage', () => {
   setup(async function () {
     const builder = new UrlBuilder().setDatabaseName('__mocha__');
-    storage = new TasksStorage(builder.getUrl());
+    storage = new TasksStorage(builder);
     await storage.clearStorage();
   });
 
@@ -23,6 +24,14 @@ suite('Tasks Storage', () => {
         times++;
       }
     });
+  });
+
+  test('calling connectTo should reconnect databases and fetch new data', async () => {
+    spy(storage);
+    await storage.connectTo('__bla__');
+
+    expect(storage.localDB.name).to.equal('a__bla__');
+    expect(storage.fetchAll).to.have.been.called;
   });
 
   test('saving a task should emit observable value', async () => {

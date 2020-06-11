@@ -5,10 +5,14 @@ import PouchMemoryAdapter from 'pouchdb-adapter-memory';
 import {TasksStorage} from '../src/js/storage';
 import {State} from '../src/js/state';
 import {Task} from '../src/js/task';
+import {UrlBuilder} from '../src/js/url-builder';
 
 suite('State', () => {
   PouchDB.plugin(PouchMemoryAdapter);
 
+  /**
+   * @type {TasksStorage}
+   */
   let storage = null;
   /**
    * @type {State}
@@ -16,11 +20,19 @@ suite('State', () => {
   let state = null;
 
   setup(async () => {
-    storage = new TasksStorage('__mocha__', null, {
+    const urlBuilder = new UrlBuilder().setDatabaseName('__mocha__');
+    storage = new TasksStorage(urlBuilder, null, {
       adapter: 'memory',
     });
     await storage.clearStorage();
     state = new State(storage);
+  });
+
+  test("calling syncStorageFrom should call storage's connectTo with the appropriate urls", async () => {
+    sinon.spy(storage);
+    await state.syncStorageFrom('foo');
+
+    expect(storage.connectTo).to.have.been.calledWith('foo');
   });
 
   test('upon initialization should emit tasks', async () => {
