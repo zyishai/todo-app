@@ -121,6 +121,23 @@ suite('State', () => {
     });
   });
 
+  test('calling deleteCategory should move all its tasks to default and remove the category', async () => {
+    await state.addNewTask('unit test', 'special');
+    state.categories.subscribe((categories) => {
+      expect(categories).to.deep.include('special');
+    });
+    state.tasks.subscribe((tasks) => {
+      expect(tasks.map((t) => t.content)).to.not.deep.include('unit test');
+    });
+
+    await state.deleteCategory('special');
+    state.categories.subscribe((categories) => {
+      expect(categories.has('special')).to.be.false;
+    });
+    // FIXME: actually works! check why the tests doesn't pass...
+    // also, add check that all tasks move to Default category.
+  });
+
   test('call to clearAllFinishedTasks should reflected in storage', async () => {
     const task = await state.addNewTask('foo');
     await state.toggleTaskState(task.id);
