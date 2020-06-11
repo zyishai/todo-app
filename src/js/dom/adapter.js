@@ -28,6 +28,9 @@ class Adapter {
   static onAddNewTaskRequest(newTaskRequestHandler) {
     TaskForm.onSubmit(newTaskRequestHandler);
   }
+  static setFormCategoriesChoices(choices) {
+    TaskForm.setFormCategoriesChoices(choices);
+  }
   static onClearFinishedTasksRequest(clearFinishedTasksRequestHandler) {
     TaskList.getClearFinishedTasksButton().addEventListener('click', (e) => {
       e.preventDefault();

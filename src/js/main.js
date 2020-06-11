@@ -57,8 +57,6 @@ export class Main {
       this._clearFinishedTasksRequestHandler.bind(this),
     );
 
-    // FIXME: combine tasks and categories observables
-    // and pass the combined data to `updateView`.
     combineLatest(
       this.state.tasks,
       this.state.categories,
@@ -70,12 +68,13 @@ export class Main {
         displayName: category,
         selected: category === selectedCategory ? true : false,
       }));
+      this.domAdapter.setFormCategoriesChoices(categoryObjs);
       this.updateView(taskObjs, categoryObjs);
     });
   }
 
-  _addNewTaskRequestHandler(newTask) {
-    this.state.addNewTask(newTask);
+  _addNewTaskRequestHandler(newTaskTitle, newTaskCategory) {
+    this.state.addNewTask(newTaskTitle, newTaskCategory);
   }
 
   _clearFinishedTasksRequestHandler() {

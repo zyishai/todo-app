@@ -1,31 +1,43 @@
 .new-task-modal header {
-    text-align: center;
-    margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .new-task-modal main {
-    margin-bottom: 20px;
+  display: grid;
+  grid-auto-flow: row;
+  row-gap: 10px;
+  margin-bottom: 20px;
 }
 
 .new-task-modal main textarea {
-    min-height: 100px !important;
-    max-height: 300px;
-    width: 100%;
-    padding: 15px;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.4rem;
-    letter-spacing: .3px;
-    resize: vertical;
-    border: none;
-    outline: none;
-    background-color: var(--auxilary);
-    border-radius: 8px;
+  min-height: 100px !important;
+  max-height: 300px;
+  width: 100%;
+  padding: 15px;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.4rem;
+  letter-spacing: 0.3px;
+  resize: vertical;
+  border: none;
+  outline: none;
+  background-color: var(--auxilary);
+  border-radius: 8px;
+}
+
+.new-task-modal main select.category {
+  border: none;
+  outline: none;
+  width: 100%;
+  padding: 10px;
+  background-color: var(--auxilary);
+  border-radius: 8px;
 }
 
 .new-task-modal footer {
-    display: grid;
-    grid-auto-flow: column;
-    column-gap: 10px;
-    justify-content: end;
+  display: grid;
+  grid-auto-flow: column;
+  column-gap: 10px;
+  justify-content: end;
 }
