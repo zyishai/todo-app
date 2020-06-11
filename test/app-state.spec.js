@@ -20,7 +20,9 @@ suite('State', () => {
   let state = null;
 
   setup(async () => {
-    const urlBuilder = new UrlBuilder().setDatabaseName('__mocha__');
+    const urlBuilder = new UrlBuilder().setDatabaseName(
+      '__mocha__' + Date.now(),
+    );
     storage = new AppStorage(urlBuilder, null, {
       adapter: 'memory',
     });
@@ -58,30 +60,43 @@ suite('State', () => {
     });
   });
 
-  test('CRUD operations on tasks should be reflected in storage', async () => {
-    const tasksObservableSpy = sinon.fake();
+  test('calling addNewTask should emit the task in the tasks observable', async () => {
+    await state.addNewTask('unit test');
+    state.tasks.subscribe((tasks) => {
+      expect(tasks.map((t) => t.content)).to.deep.include('unit test');
+    });
+  });
 
-    state.tasks.subscribe(tasksObservableSpy);
+  test('calling toggleTaskState should emit the updated task in the tasks observable', async () => {
+    const task = await state.addNewTask('unit test');
+    await state.toggleTaskState(task.id);
+    state.tasks.subscribe((tasks) => {
+      expect(tasks.map((t) => t.done)).to.deep.include(true);
+    });
+  });
 
-    const assertedTask = await state.addNewTask('unit test');
-    expect(tasksObservableSpy.thirdCall.lastArg[0].content).to.equal(
-      'unit test',
-    );
+  test('calling updateTaskContent should emit the updated task in the tasks observable', async () => {
+    const task = await state.addNewTask('unit test');
+    await state.updateTaskContent(task.id, 'updated');
+    state.tasks.subscribe((tasks) => {
+      expect(tasks.map((t) => t.content)).to.deep.include('updated');
+    });
+  });
 
-    await state.toggleTaskState(assertedTask.id);
+  test('calling deleteTask should remove the task from the tasks observable', async () => {
+    const task = await state.addNewTask('unit test');
+    await state.deleteTask(task.id);
+    state.tasks.subscribe((tasks) => {
+      expect(tasks.map((t) => t.id)).to.not.deep.include(task.id);
+    });
+  });
 
-    // calls count start from 0!! this is the 4th call.
-    expect(tasksObservableSpy.getCall(3).lastArg[0].done).to.equal(true);
+  test('calling createNewCategory should emit the new category in the categories observable', async () => {
+    await state.createNewCategory('special');
 
-    await state.updateTaskContent(assertedTask.id, 'updated');
-
-    expect(tasksObservableSpy.getCall(4).lastArg[0].content).to.equal(
-      'updated',
-    );
-
-    await state.deleteTask(assertedTask.id);
-
-    expect(tasksObservableSpy.getCall(5).lastArg).to.deep.equal([]);
+    state.categories.subscribe((categories) => {
+      expect(categories.has('special')).to.be.true;
+    });
   });
 
   test('creating task with new category should emit the new category in the categories observable', async () => {
@@ -107,14 +122,14 @@ suite('State', () => {
   });
 
   test('call to clearAllFinishedTasks should reflected in storage', async () => {
-    const tasksObservableSpy = sinon.fake();
-    state.tasks.subscribe(tasksObservableSpy);
-
     const task = await state.addNewTask('foo');
     await state.toggleTaskState(task.id);
-    await state.clearAllFinishedTasks();
 
-    expect(tasksObservableSpy.getCall(4).lastArg).to.deep.equal([]);
+    return state.clearAllFinishedTasks().then(() => {
+      state.tasks.subscribe((tasks) => {
+        expect(tasks).to.deep.equal([]);
+      });
+    });
   });
 
   test('call to clearAllTasks should reflected in storage', async () => {
