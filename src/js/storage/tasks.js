@@ -51,9 +51,8 @@ class TasksStorage {
     return this.tasks;
   }
 
-  // TODO: reconnect databases to these two urls.
   async connectTo(token) {
-    await this.localDB.close();
+    // await this.localDB.close();
     this.localUrlBuilder.setDatabaseName(`a${token}`);
     this.localDB = new PouchDB(this.localUrlBuilder.getUrl(), this.localOpts);
 
@@ -66,6 +65,7 @@ class TasksStorage {
       );
     }
 
+    const info = await this.localDB.info();
     await this.fetchAll();
   }
 
