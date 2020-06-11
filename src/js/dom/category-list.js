@@ -20,7 +20,14 @@ export class CategoryList {
         this.updateTitle(category);
       }
       return html`
-        <li class=${classMap(categoryItemClasses)}>
+        <li
+          class=${classMap(categoryItemClasses)}
+          @click=${() => {
+            if (!category.selected) {
+              handlers.categorySelectedHandler(category.name);
+            }
+          }}
+        >
           <a href="#">${category.displayName}</a>
         </li>
       `;

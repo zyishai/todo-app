@@ -9,7 +9,7 @@ export class TaskForm {
   static _getNewTaskInput() {
     return this.getForm().querySelector('main textarea');
   }
-  static _getCategorySelectInput() {
+  static _getCategoryInput() {
     return this.getForm().querySelector('main > .category');
   }
   static getForm() {
@@ -19,7 +19,7 @@ export class TaskForm {
     return this._getNewTaskInput().value;
   }
   static getSelectedCategory() {
-    return this._getCategorySelectInput().value;
+    return this._getCategoryInput().value;
   }
   static renderCategory(category) {
     return html`
@@ -52,9 +52,15 @@ export class TaskForm {
         </header>
         <main>
           <textarea></textarea>
-          <select class="category">
+          <input
+            type="text"
+            class="category"
+            list="category-select"
+            placeholder="Choose or create new category"
+          />
+          <datalist id="category-select">
             ${this.renderCategoryChoices()}
-          </select>
+          </datalist>
         </main>
         <footer>
           <button class="btn" @click=${this.closeForm.bind(this)}>

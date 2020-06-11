@@ -1,7 +1,8 @@
 import {map} from 'rxjs/operators';
 import {Storage as AppStorage} from '../storage';
 import {Task} from '../task';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, combineLatest} from 'rxjs';
+import {startsWith} from 'pouchdb-find';
 
 export class State {
   /**
@@ -17,8 +18,8 @@ export class State {
   }
 
   get tasks() {
-    return this.storage.tasks.pipe(
-      map((tasks) => (tasks ? tasks : [])),
+    return combineLatest(this.storage.tasks, this._selectedCategory$).pipe(
+      map(([tasks, _]) => (tasks ? tasks : [])),
       map((tasks) =>
         tasks.filter(
           (task) =>
@@ -44,9 +45,13 @@ export class State {
     return this.selectedCategory;
   }
 
-  // FIXME: add support for category
-  async addNewTask(text) {
+  selectCategory(categoryName) {
+    this._selectedCategory$.next(categoryName);
+  }
+
+  async addNewTask(text, category) {
     const task = new Task(text);
+    task.setCategory(category);
     await this.storage.save(task);
 
     return task;
@@ -73,9 +78,11 @@ export class State {
   }
 
   async clearAllFinishedTasks() {
-    const tasks = this.storage._tasks$.value;
-    const finishedTasks = tasks.filter((task) => task.done).map(Task.from);
-    await this.storage.delete(...finishedTasks);
+    const sub = this.tasks.subscribe(async (tasks) => {
+      const finishedTasks = tasks.filter((task) => task.done).map(Task.from);
+      await this.storage.delete(...finishedTasks);
+      sub.unsubscribe();
+    });
   }
 
   async clearAllTasks() {

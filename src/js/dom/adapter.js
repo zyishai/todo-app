@@ -44,7 +44,9 @@ class Adapter {
     return TaskEditModal.getValue();
   }
   static renderCategoriesList(categories, userDefinedHandlers = {}) {
-    const defaultHandlers = {};
+    const defaultHandlers = {
+      categorySelectedHandler: () => {},
+    };
     const handlers = {
       ...defaultHandlers,
       ...userDefinedHandlers,

@@ -26,7 +26,7 @@
   border-radius: 8px;
 }
 
-.new-task-modal main select.category {
+.new-task-modal main input.category {
   border: none;
   outline: none;
   width: 100%;

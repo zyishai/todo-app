@@ -67,7 +67,11 @@ export class Main {
         name: category,
         displayName: category,
         selected: category === selectedCategory ? true : false,
-      }));
+      })).sort((a, b) => {
+        if (a.name < b.name) return -1;
+        if (a.name > b.name) return 1;
+        return 0;
+      });
       this.domAdapter.setFormCategoriesChoices(categoryObjs);
       this.updateView(taskObjs, categoryObjs);
     });
@@ -113,12 +117,18 @@ export class Main {
     this.state.deleteTask(task.id);
   }
 
+  _selectCategory(categoryName) {
+    this.state.selectCategory(categoryName);
+  }
+
   updateView(tasks, categories) {
     this.domAdapter.renderTasksList(tasks, {
       taskStatusChangeRquestHandler: this._toggleTaskState.bind(this),
       taskContentEndEditRequestHandler: this._updateTaskContent.bind(this),
       deleteTaskRequestHandler: this._deleteTask.bind(this),
     });
-    this.domAdapter.renderCategoriesList(categories, {});
+    this.domAdapter.renderCategoriesList(categories, {
+      categorySelectedHandler: this._selectCategory.bind(this),
+    });
   }
 }

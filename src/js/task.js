@@ -3,8 +3,10 @@ import {randomBytes} from 'crypto';
 export class Task {
   static empty = null;
 
-  static from({id, content, done}) {
-    return new Task(id, content, done);
+  static from({id, content, done, category}) {
+    const t = new Task(id, content, done);
+    t.setCategory(category || 'Default');
+    return t;
   }
 
   constructor(...args) {
