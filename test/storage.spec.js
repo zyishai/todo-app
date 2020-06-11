@@ -1,18 +1,18 @@
 import {expect} from 'chai';
 import {spy} from 'sinon';
-import {TasksStorage} from '../src/js/storage/tasks';
+import {Storage as AppStorage} from '../src/js/storage';
 import {UrlBuilder} from '../src/js/url-builder';
 import {Task} from '../src/js/task';
 
 /**
- * @type {TasksStorage}
+ * @type {AppStorage}
  */
 let storage = null;
 
 suite('Tasks Storage', () => {
   setup(async function () {
     const builder = new UrlBuilder().setDatabaseName('__mocha__');
-    storage = new TasksStorage(builder);
+    storage = new AppStorage(builder);
     await storage.clearStorage();
   });
 

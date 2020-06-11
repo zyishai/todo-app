@@ -2,7 +2,7 @@ import {expect} from 'chai';
 import sinon from 'sinon';
 import PouchDB from 'pouchdb';
 import PouchMemoryAdapter from 'pouchdb-adapter-memory';
-import {TasksStorage} from '../src/js/storage';
+import {Storage as AppStorage} from '../src/js/storage';
 import {State} from '../src/js/state';
 import {Task} from '../src/js/task';
 import {UrlBuilder} from '../src/js/url-builder';
@@ -11,7 +11,7 @@ suite('State', () => {
   PouchDB.plugin(PouchMemoryAdapter);
 
   /**
-   * @type {TasksStorage}
+   * @type {AppStorage}
    */
   let storage = null;
   /**
@@ -21,7 +21,7 @@ suite('State', () => {
 
   setup(async () => {
     const urlBuilder = new UrlBuilder().setDatabaseName('__mocha__');
-    storage = new TasksStorage(urlBuilder, null, {
+    storage = new AppStorage(urlBuilder, null, {
       adapter: 'memory',
     });
     await storage.clearStorage();
