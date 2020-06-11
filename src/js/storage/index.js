@@ -1,6 +1,7 @@
 import PouchDB from 'pouchdb';
 import PouchDBFind from 'pouchdb-find';
-import {BehaviorSubject, Subject, Observable} from 'rxjs';
+import {BehaviorSubject, Subject, Observable, from} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {UrlBuilder} from '../url-builder';
 import {Task} from '../task';
 
@@ -20,9 +21,16 @@ class Storage {
     this.localDB = new PouchDB(this.localUrlBuilder.getUrl(), localOpts);
 
     /**
-     * @type {BehaviorSubject<{id, content, done, _id, _rev}[]>}
+     * @type {BehaviorSubject<{id, content, done, category?, _id, _rev}[]>}
      */
     this._tasks$ = new BehaviorSubject(null);
+    /**
+     * @type {Observable<Set<String>>}
+     */
+    this._categories$ = this._tasks$.pipe(
+      map((tasks) => (tasks ? tasks : [])),
+      map((tasks) => new Set(tasks.map((task) => task.category || 'Default'))),
+    );
 
     if (this.remoteUrlBuilder) {
       this.remoteDB = new PouchDB(this.remoteUrlBuilder.getUrl(), remoteOpts);
@@ -49,6 +57,10 @@ class Storage {
       value: this._tasks$.asObservable(),
     });
     return this.tasks;
+  }
+
+  get categories() {
+    return this._categories$;
   }
 
   async connectTo(token) {

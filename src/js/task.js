@@ -26,6 +26,8 @@ export class Task {
       this.id = this._generateId(); // Task()
       this.done = false;
     }
+
+    this.category = 'Default';
   }
 
   _generateId() {
@@ -40,11 +42,16 @@ export class Task {
     this.content = text;
   }
 
+  setCategory(cat) {
+    this.category = cat;
+  }
+
   toJSON() {
     return {
       id: this.id,
       content: this.content,
       done: this.done,
+      category: this.category,
     };
   }
 }
