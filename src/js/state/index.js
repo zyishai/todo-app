@@ -1,4 +1,4 @@
-import {map} from 'rxjs/operators';
+import {map, take} from 'rxjs/operators';
 import {Storage as AppStorage} from '../storage';
 import {Task} from '../task';
 import {BehaviorSubject, Observable, combineLatest} from 'rxjs';
@@ -14,7 +14,7 @@ export class State {
   }
 
   async syncStorageFrom(token) {
-    this.storage.connectTo(token);
+    await this.storage.connectTo(token);
   }
 
   get tasks() {
@@ -45,11 +45,28 @@ export class State {
     return this.selectedCategory;
   }
 
+  async createNewCategory(categoryName) {
+    const task = new Task(`__${categoryName}__`);
+    task.setCategory(categoryName);
+    await this.storage.save(task);
+
+    return task;
+  }
+
   selectCategory(categoryName) {
     this._selectedCategory$.next(categoryName);
   }
 
-  async addNewTask(text, category) {
+  /**
+   * @returns {Promise<Task>}
+   */
+  async addNewTask(text, category = 'Default') {
+    await this.categories.pipe(take(1)).forEach((categories) => {
+      if (!categories.has(category)) {
+        return this.createNewCategory(category);
+      }
+    });
+
     const task = new Task(text);
     task.setCategory(category);
     await this.storage.save(task);
@@ -78,10 +95,14 @@ export class State {
   }
 
   async clearAllFinishedTasks() {
-    const sub = this.tasks.subscribe(async (tasks) => {
-      const finishedTasks = tasks.filter((task) => task.done).map(Task.from);
-      await this.storage.delete(...finishedTasks);
-      sub.unsubscribe();
+    return new Promise((resolve) => {
+      const sub = this.tasks.subscribe((tasks) => {
+        const finishedTasks = tasks.filter((task) => task.done).map(Task.from);
+        this.storage.delete(...finishedTasks).then(() => {
+          sub.unsubscribe();
+          resolve();
+        });
+      });
     });
   }
 

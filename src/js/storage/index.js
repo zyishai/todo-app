@@ -28,7 +28,7 @@ class Storage {
      * @type {Observable<Set<String>>}
      */
     this._categories$ = this._tasks$.pipe(
-      map((tasks) => (tasks ? tasks : [])),
+      map((tasks) => (tasks && tasks.length ? tasks : [{}])),
       map((tasks) => new Set(tasks.map((task) => task.category || 'Default'))),
     );
 
@@ -64,12 +64,10 @@ class Storage {
   }
 
   async connectTo(token) {
-    // await this.localDB.close();
     this.localUrlBuilder.setDatabaseName(`a${token}`);
     this.localDB = new PouchDB(this.localUrlBuilder.getUrl(), this.localOpts);
 
     if (this.remoteUrlBuilder) {
-      await this.remoteDB.close();
       this.remoteUrlBuilder.setDatabaseName(`a${token}`);
       this.remoteDB = new PouchDB(
         this.remoteUrlBuilder.getUrl(),
