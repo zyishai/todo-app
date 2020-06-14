@@ -11,8 +11,8 @@ jobs:
           steps:
             - run: npm install
             - run: npm test
-            - run: surge --project dist --domain tasks.surge.sh
+            - run: npm deploy
 workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
+  build-and-test:
+    jobs:
+      - build-and-test

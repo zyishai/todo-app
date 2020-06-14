@@ -10,7 +10,7 @@
     "test": "mocha --ui tdd --reporter list --exclude test/*-old* --require ./test/test-helper.js --require esm",
     "test:watch": "yarn test --growl --watch",
     "build": "parcel build src/index.html",
-    "deploy": "surge dist tasks.surge.sh"
+    "deploy": "surge --project dist --domain tasks.surge.sh"
   },
   "author": "Yishai Zehavi (zehaviyishai@gmail.com)",
   "license": "ISC",
